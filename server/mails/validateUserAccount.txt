@@ -1,0 +1,146 @@
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+    <style>
+      h1 {
+        margin-top: 0cm;
+        margin-right: 0cm;
+        margin-bottom: 15pt;
+        margin-left: 0cm;
+        font-size: 19.5pt;
+        font-family: 'Calibri', sans-serif;
+        font-weight: normal;
+      }
+      h2 {
+        margin-top: 0cm;
+        margin-right: 0cm;
+        margin-bottom: 15pt;
+        margin-left: 0cm;
+        font-size: 13.5pt;
+        font-family: 'Calibri', sans-serif;
+        font-weight: normal;
+      }
+      .span1 {
+        font-family: 'Open Sans', sans-serif;
+        color: #333333;
+      }
+      .span2 {
+        font-size: 10.5pt;
+        font-family: 'Open Sans', sans-serif;
+        color: #333333;
+      }
+      .par1 {
+        text-align: left;
+        font-size: 10.5pt;
+      }
+      .par2 {
+        font-family: 'Calibri', sans-serif;
+        text-align: left;
+        font-size: 11pt;
+      }
+      .ul1 {
+        font-size: 9.5pt;
+        text-align: left;
+      }
+      table {
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      td, th {
+        padding: 10px;
+        text-align: center;
+      }
+      .td1 {
+        padding: 10px;
+        text-align: left;
+      }
+      .td2 {
+        padding: 10px;
+        text-align: right;
+      }
+      .mcnImageContentContainer {
+        min-width: 100%;
+        border-collapse: collapse;
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+        width: 100%;
+        border: 0;
+      }
+      .mcnImageContent {
+        padding-right: 0px;
+        padding-left: 0px;
+        padding-top: 0;
+        padding-bottom: 0;
+        text-align: center;
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+      }
+      .mcnImage {
+        padding-bottom: 0px;
+        vertical-align: bottom;
+        display: inline !important;
+        border: 1px none;
+        border-radius: 0%;
+        outline: none;
+        text-decoration: none;
+        -ms-interpolation-mode: bicubic;
+      }
+      .mcnImage1 {
+        padding-right: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 30%;
+      }
+    </style>
+  </head>
+  <body>
+    <table width='60%' style=' width:700px; border-collapse:collapse; border:none; border-spacing:0; max-width:80%; margin:1px auto; '>
+      <tr>
+        <td>
+          <table class='mcnImageContentContainer' cellspacing='0' cellpadding='0'>
+            <tbody>
+              <tr>
+                <td class='mcnImageContent' valign='top'>
+                  <img alt='' src='#' class='mcnImage' height='100' width='600' align='middle' />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <tr>
+            <td style='text-align:center;'>
+              <h2>
+                <span class='span1'>Bonjour {{name}},</span>
+              </h2>
+            </td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>
+              <h2 style='margin-bottom:3.75pt;'>
+                <span class='span1'>Confirmez votre adresse email.</span>
+              </h2>
+              <span class='span1'>
+                <p class='par1'>Vous venez d'ouvrir un nouveau compte eChallenge. Confirmez votre adresse email pour nous indiquer que vous êtes le titulaire légitime de ce compte.</p>
+              </span>
+              <span class='span1'>
+                <p class='par1'>
+                  <a href='{{confirmLink}}' role='button' style='text-decoration:none; color:#ffffff!important; white-space:nowrap; line-height:24px; border-radius:24px; padding:10px 20px; display:inline-block; border:1px solid #0070ba; text-align:center; min-width:150px; background-color:#0070BA; font-size:17px; font-family:Calibri,Trebuchet,Arial,sans serif'>Confirmez mon adresse email</a>
+                </p>
+              </span>
+              <span class='span1'>
+                <p class='par1'>Si vous avez des questions ou avez besoin d'assistance, n'hésitez pas à nous contacter à esgiproject@gmail.com</p>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td style='text-align:center; width:700px;'>
+              <p><span class='span2'>A bientôt.<o:p></o:p></span></p>
+              <p><span class='span2'>Toute l’équipe <b>eChallenge</b> vous remercie pour votre confiance<o:p></o:p></span></p>
+            </td>
+          </tr>
+        </td>
+      </tr>
+    </table>
+    <br />
+  </body>
+</html>

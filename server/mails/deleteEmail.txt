@@ -1,0 +1,25 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suppression imminente de votre compte</title>
+</head>
+<body style="font-family: Arial, sans-serif;">
+
+  <h1>Suppression imminente de votre compte</h1>
+
+  <p>Bonjour {{name}},</p>
+
+  <p>Nous espérons que ce message vous trouve bien. Nous vous informons que vous avez demandé la suppression de votre compte sur Oh'My'Pc.</p>
+
+  <p>Si vous avez changé d'avis ou si cette demande a été effectuée par erreur, veuillez ignorer ce message. Cependant, si vous souhaitez toujours supprimer votre compte, aucune action n'est requise de votre part.</p>
+
+  <p>Votre compte et toutes vos données associées seront supprimés dans une semaine, à moins que vous ne vous rétractiez d'ici là.</p>
+
+  <p>Si vous avez des questions ou des préoccupations, n'hésitez pas à nous contacter à esgiprojects@gmail.com.</p>
+
+  <p>Merci de votre compréhension.</p>
+
+  <p>Cordialement,<br>
+    L'équipe de Oh'My'Pc</p>
+</body>
+</html>

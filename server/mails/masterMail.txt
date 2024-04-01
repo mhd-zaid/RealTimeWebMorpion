@@ -1,0 +1,27 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        header, footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+    </header>
+
+    <main>
+        <p>{{content}}</p>
+    </main>
+
+    <footer>
+        <p>Rue de Paris</p>
+        <p>06.99.99.99.99</p>
+        <p>esgiProject@gmail.com</p>
+    </footer>
+</body>
+</html>

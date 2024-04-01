@@ -1,7 +1,7 @@
-import {Sequelize} from "sequelize";
+import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize(process.env.POSTGRES_URI, {
+const connection = new Sequelize(process.env.POSTGRES_URI, {
     logging: false, // Désactive les logs Sequelize
 });
 
-export default sequelize;
+export default connection;
