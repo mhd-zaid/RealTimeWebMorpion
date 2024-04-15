@@ -12,13 +12,20 @@ import {
   MenuItem,
   MenuList,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+  const navigate = useNavigate();
   const { setToken } = useToken();
   const { setIsLoggedIn, isLoggedIn } = useContext(AuthContext);
 
   const links = [
-    { label: 'Chat Global', action: () => {} },
+    {
+      label: 'Chat Global',
+      action: () => {
+        navigate('/general-chat');
+      },
+    },
     {
       label: 'Nouvelle Partie',
       special: true,
@@ -49,7 +56,7 @@ const Header = () => {
           </Heading>
         ))}
       </Flex>
-      {isLoggedIn && (
+      {!isLoggedIn && (
         <Flex justifySelf="end" alignItems="center">
           <Link href="/auth/register" textTransform="uppercase" mr={4}>
             Inscription
@@ -59,7 +66,7 @@ const Header = () => {
           </Link>
         </Flex>
       )}
-      {!isLoggedIn && (
+      {isLoggedIn && (
         <Menu>
           <MenuButton>
             <Avatar />
