@@ -5,7 +5,7 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import extend_theme from './utils/chakra-theme.js';
 import './index.css';
 import { ProtectedRoute } from './layouts/ProtectedRoute.jsx';
-import NotFoundPage from '@/pages/NotFoundPage.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 import App from './App.jsx';
 import Home from './pages/HomePage';
 import Profile from './pages/ProfilePage';
