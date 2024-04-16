@@ -6,30 +6,31 @@ import {
   Flex,
   Heading,
   Image,
+  keyframes,
   Link,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
-  const navigate = useNavigate();
   const { setToken } = useToken();
   const { setIsLoggedIn, isLoggedIn } = useContext(AuthContext);
 
   const links = [
     {
       label: 'Chat Global',
-      action: () => {
-        navigate('/general-chat');
-      },
+      href: '/general-chat',
     },
     {
       label: 'Nouvelle Partie',
       special: true,
-      action: () => {},
+      href: '/room/new',
+    },
+    {
+      label: 'Mes Parties',
+      href: '/profile/history',
     },
   ];
 
@@ -39,51 +40,73 @@ const Header = () => {
   };
 
   return (
-    <Flex w="full" alignItems="center" minH={20} px={8}>
+    <Flex
+      w="full"
+      justifyContent="space-between"
+      alignItems="center"
+      minH={20}
+      px={8}
+    >
       <Link h={12} href="/">
         <Image src="/logo.svg" alt="logo" h="full" />
       </Link>
-      <Flex w="full" justifyContent="center" alignItems="center">
-        {links.map(link => (
-          <Heading
-            key={link.label}
-            fontSize={link.special ? undefined : 'xl'}
-            p={3}
-            onClick={link.action && link.action}
-            _hover={{ cursor: 'pointer', textDecoration: 'underline' }}
-          >
-            {link.label}
-          </Heading>
-        ))}
-      </Flex>
+
       {!isLoggedIn && (
-        <Flex justifySelf="end" alignItems="center">
-          <Link href="/auth/register" textTransform="uppercase" mr={4}>
-            Inscription
-          </Link>
-          <Link href="/auth/login" textTransform="uppercase">
-            Connexion
-          </Link>
-        </Flex>
+        <>
+          <Heading
+            p={3}
+            as={Link}
+            href={'/auth/login'}
+            rota
+            animation={`${keyframes`from { scale: 0.8; } to { scale: 1;  }`} 1s infinite alternate`}
+          >
+            Connectez-vous pour jouer!
+          </Heading>
+          <Flex alignItems="center">
+            <Link href="/auth/register" textTransform="uppercase" mr={4}>
+              Inscription
+            </Link>
+            <Link href="/auth/login" textTransform="uppercase">
+              Connexion
+            </Link>
+          </Flex>
+        </>
       )}
+
       {isLoggedIn && (
-        <Menu>
-          <MenuButton>
-            <Avatar />
-          </MenuButton>
-          <MenuList>
-            <MenuItem as={Link} href="/profile">
-              Profil
-            </MenuItem>
-            <MenuItem
-              onClick={handleLogout}
-              _hover={{ cursor: 'pointer', textDecoration: 'underline' }}
-              color="red"
-            >
-              Se déconnecter
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <>
+          <Flex alignItems="baseline">
+            {links.map(link => (
+              <Heading
+                key={link.label}
+                fontSize={link.special ? undefined : 'xl'}
+                p={3}
+                as={Link}
+                href={link.href}
+              >
+                {link.label}
+              </Heading>
+            ))}
+          </Flex>
+
+          <Menu>
+            <MenuButton>
+              <Avatar />
+            </MenuButton>
+            <MenuList>
+              <MenuItem as={Link} href="/profile">
+                Profil
+              </MenuItem>
+              <MenuItem
+                onClick={handleLogout}
+                _hover={{ cursor: 'pointer', textDecoration: 'underline' }}
+                color="red"
+              >
+                Se déconnecter
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </>
       )}
     </Flex>
   );
