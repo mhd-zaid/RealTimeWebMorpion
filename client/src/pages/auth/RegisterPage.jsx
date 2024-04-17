@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { z } from 'zod';
 import validateData from '@/utils/formValidator.js';
 import {
-  Box,
   useToast,
   Heading,
   Flex,
@@ -88,9 +87,6 @@ const RegisterPage = () => {
       }
     });
   };
-
-  console.log(errors);
-  console.log(formData);
 
   return (
     <Flex
