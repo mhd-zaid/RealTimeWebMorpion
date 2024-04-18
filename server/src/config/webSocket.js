@@ -1,9 +1,7 @@
-import { Server } from "socket.io"
+import db from "../models/index.js";
+import messageSocket from "../routes/sockets/message.js";
 
-const io = new Server(process.env.WEB_SOCKET_PORT, {
-    cors: {
-      origin: true
-    }
-  });
-
-export default io;
+export default (io) => {
+  messageSocket(io, db);
+  
+};

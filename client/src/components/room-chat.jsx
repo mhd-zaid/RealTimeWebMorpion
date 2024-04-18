@@ -11,14 +11,15 @@ import { Box } from '@chakra-ui/react';
 import io from 'socket.io-client';
 
 const socket_url = import.meta.env.VITE_SOCKET_URL;
-// const socket = io(socket_url);
+//const messageSocket = io(`${socket_url}/messages`);
 
 const RoomChat = ({ isGeneral }) => {
   const [chatMessages, setChatMessages] = useState([]);
   if (isGeneral) {
-    // socket.emit('getAllMessages', 'JWT_TOKEN');
-    // socket.on('allMessages', messages => {
-    //   setChatMessages(messages);
+    // messageSocket.emit('server:messages:list:all');
+    // console.log('isGeneral');
+    // messageSocket.on('client:messages:list:all', messages => {
+    //   console.log(messages);
     // });
   }
   const handleUserMessage = async userMessage => {
