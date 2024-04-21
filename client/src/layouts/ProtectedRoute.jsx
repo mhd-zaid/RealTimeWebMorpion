@@ -8,7 +8,7 @@ export const ProtectedRoute = () => {
   // CHECK AUTH
   if (token === null || token === undefined || token === '') {
     setTimeout(() => {
-      navigate('/login');
+      navigate('/auth/login');
     }, 1000);
     return <h1>Redirecting...</h1>;
   }

@@ -14,7 +14,6 @@ import RegisterPage from './pages/auth/RegisterPage';
 import ForgetPasswordPage from './pages/auth/ForgetPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import EmailVerifiedPage from './pages/auth/EmailVerifiedPage.jsx';
-import RoomChat from './components/room-chat.jsx';
 
 const theme = extendTheme(extend_theme);
 
@@ -25,7 +24,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
-            <Route path="general-chat" element={<RoomChat isGeneral />} />
             <Route element={<ProtectedRoute />}>
               <Route path="profile" element={<Profile />} />
             </Route>
