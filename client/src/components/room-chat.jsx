@@ -7,24 +7,37 @@ import {
   MessageInput,
   MessageSeparator,
 } from '@chatscope/chat-ui-kit-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import io from 'socket.io-client';
 import stringToColor from '../utils/stringToColor';
 
-const socket_url = import.meta.env.VITE_SOCKET_URL;
-//const messageSocket = io(`${socket_url}/messages`);
-
 const RoomChat = ({ isGeneral }) => {
+  const messageSocket = useMemo(
+    () => io(`${import.meta.env.VITE_SOCKET_URL}/messages`),
+    [],
+  );
+
   const [chatMessages, setChatMessages] = useState([]);
-  if (isGeneral) {
-    // messageSocket.emit('server:messages:list:all');
-    // console.log('isGeneral');
-    // messageSocket.on('client:messages:list:all', messages => {
-    //   console.log(messages);
-    // });
-  }
+
+  useEffect(() => {
+    messageSocket.on('connect', () => {
+      console.log('connected');
+    });
+    return () => {
+      messageSocket.disconnect();
+    };
+  }, [messageSocket]);
+  // if (isGeneral) {
+  // messageSocket.emit('server:messages:list:all');
+  // console.log('isGeneral');
+  // messageSocket.on('client:messages:list:all', messages => {
+  //   console.log(messages);
+  // });
+  // }
+
   const handleUserMessage = async userMessage => {
+    // à remplacer par les données de l'utilisateur connecté
     const newUserMessage = {
       message: userMessage,
       sender: 'dani',
@@ -35,6 +48,11 @@ const RoomChat = ({ isGeneral }) => {
 
     setChatMessages([...chatMessages, newUserMessage]);
     // await processUserMessage(userMessage);
+  };
+
+  const sendUserMessage = userMessage => {
+    console.log("envoi d'un message");
+    messageSocket.emit('message', userMessage);
   };
 
   return (
