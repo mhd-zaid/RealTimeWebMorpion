@@ -6,7 +6,11 @@ import { Container } from '@chakra-ui/react';
 const HomePage = () => {
   const { isLoggedIn } = useContext(AuthContext);
 
-  return <Container>{!isLoggedIn && <RoomChat isGeneral />}</Container>;
+  return (
+    <Container maxW={['100%', '100%', '70%']} h="full" p={4}>
+      {!isLoggedIn && <RoomChat isGeneral />}
+    </Container>
+  );
 };
 
 export default HomePage;
