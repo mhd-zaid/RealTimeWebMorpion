@@ -16,7 +16,7 @@ export default function (connection) {
 
   Message.init(
     {
-      id: { type: DataTypes.UUID, primaryKey: true },
+      id: { type: DataTypes.UUID, primaryKey: true, defaultValue: DataTypes.UUID },
       content: {
         type: DataTypes.STRING(50),
         allowNull: true,
