@@ -7,52 +7,63 @@ import {
   MessageInput,
   MessageSeparator,
 } from '@chatscope/chat-ui-kit-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import io from 'socket.io-client';
 import stringToColor from '../utils/stringToColor';
 
 const RoomChat = ({ isGeneral }) => {
-  const messageSocket = useMemo(
-    () => io(`${import.meta.env.VITE_SOCKET_URL}/messages`),
-    [],
-  );
-
+  const [messageSocket, setMessageSocket] = useState();
   const [chatMessages, setChatMessages] = useState([]);
 
   useEffect(() => {
+    setMessageSocket(io(`${import.meta.env.VITE_SOCKET_URL}/messages`));
+  }, []);
+
+  useEffect(() => {
+    if (!messageSocket) return;
     messageSocket.on('connect', () => {
       console.log('connected');
+      if (isGeneral) {
+        messageSocket.emit('server:messages:list:all');
+        messageSocket.on('client:messages:list:all', messages => {
+          console.log('messages', messages);
+        });
+      }
     });
+
     return () => {
       messageSocket.disconnect();
     };
-  }, [messageSocket]);
-  // if (isGeneral) {
-  // messageSocket.emit('server:messages:list:all');
-  // console.log('isGeneral');
-  // messageSocket.on('client:messages:list:all', messages => {
-  //   console.log(messages);
-  // });
-  // }
+  }, [messageSocket, isGeneral]);
 
   const handleUserMessage = async userMessage => {
     // à remplacer par les données de l'utilisateur connecté
     const newUserMessage = {
       message: userMessage,
-      sender: 'dani',
-      senderId: 'cf8bckdsqjl',
+      sender: 'dani', // remplacer par les données user
+      senderId: '018f1126-ee5a-7e5e-831f-f80b95b9c667', // remplacer par les données user
       direction: 'outgoing',
       sentTime: new Date().toISOString(),
     };
 
     setChatMessages([...chatMessages, newUserMessage]);
-    // await processUserMessage(userMessage);
+    sendUserMessage(newUserMessage);
   };
 
   const sendUserMessage = userMessage => {
     console.log("envoi d'un message");
-    messageSocket.emit('message', userMessage);
+    const { message, senderId } = userMessage;
+    messageSocket.emit('server:messages:create:all', {
+      content: message,
+      userId: senderId,
+    });
+
+    // update messages
+    messageSocket.emit('server:messages:list:all');
+    messageSocket.on('client:messages:list:all', messages => {
+      console.log('messages', messages);
+    });
   };
 
   return (
