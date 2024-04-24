@@ -3,14 +3,14 @@ import { Model, DataTypes } from 'sequelize';
 export default function (connection) {
   class Message extends Model {
     static associate(db) {
-        Message.belongsTo(db.User, {
-            foreignKey: 'userId',
-            as: 'user',
-        });
-        Message.belongsTo(db.Room, {
-            foreignKey: 'roomId',
-            as: 'room',
-        });
+      Message.belongsTo(db.User, {
+        foreignKey: 'userId',
+        as: 'user',
+      });
+      Message.belongsTo(db.Room, {
+        foreignKey: 'roomId',
+        as: 'room',
+      });
     }
   }
 
@@ -25,7 +25,7 @@ export default function (connection) {
     {
       sequelize: connection,
       tableName: 'Message',
-    },
+    }
   );
 
   return Message;
