@@ -25,8 +25,7 @@ const RoomChat = ({ isGeneral }) => {
     messageSocket.on('connect', () => {
       console.log('connected');
       if (isGeneral) {
-        messageSocket.emit('server:messages:list:all');
-        messageSocket.on('client:messages:list:all', messages => {
+        messageSocket.on('messages:list', messages => {
           console.log('messages', messages);
         });
       }
@@ -54,15 +53,9 @@ const RoomChat = ({ isGeneral }) => {
   const sendUserMessage = userMessage => {
     console.log("envoi d'un message");
     const { message, senderId } = userMessage;
-    messageSocket.emit('server:messages:create:all', {
+    messageSocket.emit('messages:create', {
       content: message,
       userId: senderId,
-    });
-
-    // update messages
-    messageSocket.emit('server:messages:list:all');
-    messageSocket.on('client:messages:list:all', messages => {
-      console.log('messages', messages);
     });
   };
 

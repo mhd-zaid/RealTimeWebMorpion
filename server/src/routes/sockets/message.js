@@ -1,16 +1,20 @@
 export default (io, db) => {
-  io.of('/messages').on('connection', socket => {
-    socket.emit('messages:list', async () => {
-      return { status: 'success', data: await db.Message.findAll() };
-    });
+  io.of('/messages').on('connection', async socket => {
+    const broadcastMessages = async () => {
+      io.of('/messages').emit('messages:list', {
+        status: 'success',
+        data: await db.Message.findAll(),
+      });
+    };
 
-    socket.emit('messages:create', async () => {
+    broadcastMessages();
+
+    socket.on('messages:create', async data => {
       await db.Message.create({
         content: data.content,
         userId: data.userId,
-        roomId: null,
       });
-      return { status: 'success', message: 'messages created' };
+      broadcastMessages();
     });
 
     socket.emit('messages:create:room', async data => {

@@ -16,7 +16,11 @@ export default function (connection) {
 
   Message.init(
     {
-      id: { type: DataTypes.UUID, primaryKey: true, defaultValue: DataTypes.UUID },
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+      },
       content: {
         type: DataTypes.STRING(50),
         allowNull: true,
@@ -25,7 +29,7 @@ export default function (connection) {
     {
       sequelize: connection,
       tableName: 'Message',
-    }
+    },
   );
 
   return Message;
