@@ -31,13 +31,11 @@ export default () => ({
         isVerified: false,
         role: 'user',
       });
-      res
-        .status(201)
-        .json({
-          success: true,
-          message: 'Utilisateur crée avec succès !',
-          data: user,
-        });
+      res.status(201).json({
+        success: true,
+        message: 'Utilisateur crée avec succès !',
+        data: user,
+      });
     } catch (error) {
       if (
         error.name === 'SequelizeValidationError' ||
@@ -159,12 +157,10 @@ export default () => ({
         content,
       );
 
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: 'Réinitialisation du mot de passe réussie.',
-        });
+      return res.status(200).json({
+        success: true,
+        message: 'Réinitialisation du mot de passe réussie.',
+      });
     } catch (error) {
       if (
         error.name === 'SequelizeValidationError' ||
@@ -204,12 +200,10 @@ export default () => ({
           content,
         );
       }
-      return res
-        .status(200)
-        .send({
-          success: true,
-          message: "Un email a été envoyé à l'adresse indiquée.",
-        });
+      return res.status(200).send({
+        success: true,
+        message: "Un email a été envoyé à l'adresse indiquée.",
+      });
     } catch (error) {
       if (
         error.name === 'SequelizeValidationError' ||

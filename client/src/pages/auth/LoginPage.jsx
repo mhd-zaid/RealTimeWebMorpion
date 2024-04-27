@@ -76,7 +76,7 @@ const LoginPage = () => {
       return;
     }
 
-    setToken(login.data);
+    setToken(login.data.token);
     setIsLoggedIn(true);
     redirect('/');
 

@@ -8,11 +8,12 @@ import {
   MessageSeparator,
 } from '@chatscope/chat-ui-kit-react';
 import { useEffect, useState } from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text, useToast } from '@chakra-ui/react';
 import io from 'socket.io-client';
 import stringToColor from '../utils/stringToColor';
 
 const RoomChat = ({ isGeneral, partyId }) => {
+  const toast = useToast();
   const [messageSocket, setMessageSocket] = useState();
   const [chatMessages, setChatMessages] = useState([]);
 
@@ -39,44 +40,42 @@ const RoomChat = ({ isGeneral, partyId }) => {
         setChatMessages(
           messages.data.map(message => ({
             message: message.content,
-            sender: 'user', // change by message.username
+            sender: message.user.userName,
             senderId: message.userId,
             direction: 'incoming', // check if message.userId === currentUserId
             sentTime: message.createdAt,
           })),
         );
       });
+
+      messageSocket.on('user:join', message => {
+        console.log(message);
+        toast({
+          title: message,
+          status: 'info',
+          position: 'bottom-right',
+          duration: 3000,
+        });
+      });
+      messageSocket.on('user:quit', message => {
+        console.log(message);
+        toast({
+          title: message,
+          status: 'warning',
+          position: 'bottom-right',
+          duration: 3000,
+        });
+      });
     });
 
     return () => {
-      if (isGeneral) {
-        messageSocket.emit('quit', 'general');
-      } else {
-        messageSocket.emit('quit', partyId);
-      }
-
       messageSocket.disconnect();
     };
-  }, [messageSocket, isGeneral, partyId]);
+  }, [messageSocket, isGeneral, partyId, toast]);
 
   const handleUserMessage = async userMessage => {
-    // à remplacer par les données de l'utilisateur connecté
-    const newUserMessage = {
-      message: userMessage,
-      sender: 'dani', // remplacer par les données user
-      senderId: '6c7aa559-a6c8-4fe7-a07f-e92a8a3d4539', // remplacer par les données user
-      direction: 'outgoing',
-      sentTime: new Date().toISOString(),
-    };
-
-    sendUserMessage(newUserMessage);
-  };
-
-  const sendUserMessage = userMessage => {
-    const { message, senderId } = userMessage;
     messageSocket.emit('messages:create', {
-      content: message,
-      userId: senderId,
+      content: userMessage,
       room: isGeneral ? 'general' : partyId,
     });
   };
