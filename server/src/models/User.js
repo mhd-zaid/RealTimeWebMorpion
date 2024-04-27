@@ -43,16 +43,6 @@ export default function (connection) {
             args: [8],
             msg: 'Le mot de passe doit avoir au moins 8 caractères.',
           },
-
-          // isStrongPassword(value) {
-          //     const strongPasswordRegex =
-          //         /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-          //     if (!strongPasswordRegex.test(value)) {
-          //         throw new Error(
-          //             "Le mot de passe doit avoir au moins 8 caractères avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial."
-          //         );
-          //     }
-          // },
         },
       },
       gender: {
@@ -68,19 +58,9 @@ export default function (connection) {
         allowNull: false,
         defaultValue: false,
       },
-      loginAttempts: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
       token: {
         type: DataTypes.STRING(1000),
         allowNull: true,
-      },
-      isActive: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
       },
     },
     {
@@ -107,16 +87,16 @@ export default function (connection) {
     }
   });
 
-  // User.addHook('afterCreate', async user => {
-  //   let content = await fs.readFile(`mails/validateUserAccount.txt`, 'utf8');
-  //   content = content
-  //     .replace('{{name}}', user.userName)
-  //     .replace(
-  //       '{{confirmLink}}',
-  //       `${process.env.SERVER_URL}/verify/${user.token}`,
-  //     );
-  //   await sendMail(user.email, 'Vérifiez votre compte', null, content);
-  // });
+  User.addHook('afterCreate', async user => {
+    let content = await fs.readFile(`mails/validateUserAccount.txt`, 'utf8');
+    content = content
+      .replace('{{name}}', user.userName)
+      .replace(
+        '{{confirmLink}}',
+        `${process.env.SERVER_URL}/verify/${user.token}`,
+      );
+    await sendMail(user.email, 'Vérifiez votre compte', null, content);
+  });
 
   return User;
 }
