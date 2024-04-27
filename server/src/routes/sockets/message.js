@@ -3,8 +3,8 @@ export default (io, db) => {
     socket.on('join',(room) => {
       socket.join(room)
     });
-    socket.on('disconnect', () => {
-      socket.leave('global-chat');
+    socket.on('disconnect', (room) => {
+      socket.leave(room);
     });
     const broadcastMessages = async () => {
       socket.to('global-chat').emit('messages:list', {
