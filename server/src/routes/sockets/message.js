@@ -3,7 +3,14 @@ export default (io, db) => {
     const broadcastMessages = async () => {
       io.of('/messages').emit('messages:list', {
         status: 'success',
-        data: await db.Message.findAll(),
+        data: await db.Message.findAll(
+          {
+            where: {
+              partyId: null,
+            },
+            include: { model: db.User, attributes: ['id', 'username'], as: 'user'},
+          }
+        ),
       });
     };
 
@@ -17,7 +24,7 @@ export default (io, db) => {
       broadcastMessages();
     });
 
-    socket.emit('messages:create:room', async data => {
+    socket.emit('messages:create:party', async data => {
       await db.Message.create({
         content: data.content,
         userId: data.userId,
@@ -26,7 +33,7 @@ export default (io, db) => {
       return { status: 'success', message: 'messages created' };
     });
 
-    socket.emit('messages:list:room', async data => {
+    socket.emit('messages:list:party', async data => {
       await db.Message.findAll({
         where: {
           partyId: data.partyId,
