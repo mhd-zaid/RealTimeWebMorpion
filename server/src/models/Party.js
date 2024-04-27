@@ -27,8 +27,25 @@ export default function (connection) {
     {
       id: { type: DataTypes.UUID, primaryKey: true },
       status: {
-        type: DataTypes.ENUM('in progress', 'finished'),
-        defaultValue: 'in progress',
+        type: DataTypes.ENUM('searchPlayer', 'in progress', 'finished'),
+        defaultValue: 'searchPlayer',
+        allowNull: true,
+      },
+      is_private: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      code:{
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      symbolUser1: {
+        type: DataTypes.ENUM('X', 'O'),
+        allowNull: true,
+      },
+      symbolUser2: {
+        type: DataTypes.ENUM('X', 'O'),
         allowNull: true,
       },
     },
