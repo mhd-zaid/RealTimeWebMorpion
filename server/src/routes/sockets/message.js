@@ -1,51 +1,39 @@
 export default (io, db) => {
   io.of('/messages').on('connection', async socket => {
-    socket.on('join',(room) => {
-      socket.join(room)
+    socket.on('join', room => {
+      socket.join(room);
+      broadcastMessages(room);
     });
-    socket.on('disconnect', (room) => {
+    socket.on('quit', room => {
       socket.leave(room);
     });
-    const broadcastMessages = async () => {
-      socket.to('global-chat').emit('messages:list', {
-        status: 'success',
-        data: await db.Message.findAll(
-        {
-          where: {
-            partyId: null,
-          },
-          include: { model: db.User, attributes: ['id', 'userName'], as: 'user'},
-        }
-      ),
-      });
+
+    const broadcastMessages = async room => {
+      io.of('/messages')
+        .to(room)
+        .emit('messages:list', {
+          status: 'success',
+          data: await db.Message.findAll({
+            where: {
+              partyId: room === 'general' ? null : room,
+            },
+            include: {
+              model: db.User,
+              attributes: ['id', 'userName'],
+              as: 'user',
+            },
+            order: [['createdAt', 'ASC']],
+          }),
+        });
     };
 
-    broadcastMessages();
-
-    socket.on('messages:create', async data => {
+    socket.on('messages:create', async ({ content, userId, room }) => {
       await db.Message.create({
-        content: data.content,
-        userId: data.userId,
+        content: content,
+        userId: userId,
+        partyId: room === 'general' ? null : room,
       });
-      broadcastMessages();
-    });
-
-    socket.emit('messages:create:party', async data => {
-      await db.Message.create({
-        content: data.content,
-        userId: data.userId,
-        partyId: data.partyId,
-      });
-      return { status: 'success', message: 'messages created' };
-    });
-
-    socket.emit('messages:list:party', async data => {
-      await db.Message.findAll({
-        where: {
-          partyId: data.partyId,
-        },
-      });
-      return { status: 'success', data: messages };
+      broadcastMessages(room);
     });
   });
 

@@ -3,23 +3,23 @@ import { Model, DataTypes } from 'sequelize';
 export default function (connection) {
   class Party extends Model {
     static associate(db) {
-        Party.belongsTo(db.User, {
-            foreignKey: 'user1Id',
-            as: 'user1',
-        });
-        Party.belongsTo(db.User, {
-            foreignKey: 'user2Id',
-            as: 'user2',
-        });
-        Party.belongsTo(db.User, {
-            allowNull: true,
-            foreignKey: 'winnerId',
-            as: 'winner',
-        });
-        Party.hasMany(db.Message, {
-            foreignKey: 'partyId',
-            as: 'messages',
-        });
+      Party.belongsTo(db.User, {
+        foreignKey: 'user1Id',
+        as: 'user1',
+      });
+      Party.belongsTo(db.User, {
+        foreignKey: 'user2Id',
+        as: 'user2',
+      });
+      Party.belongsTo(db.User, {
+        allowNull: true,
+        foreignKey: 'winnerId',
+        as: 'winner',
+      });
+      Party.hasMany(db.Message, {
+        foreignKey: 'partyId',
+        as: 'messages',
+      });
     }
   }
 
@@ -36,7 +36,7 @@ export default function (connection) {
         defaultValue: false,
         allowNull: false,
       },
-      code:{
+      code: {
         type: DataTypes.STRING,
         allowNull: true,
       },

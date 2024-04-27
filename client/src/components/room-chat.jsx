@@ -12,50 +12,72 @@ import { Box, Text } from '@chakra-ui/react';
 import io from 'socket.io-client';
 import stringToColor from '../utils/stringToColor';
 
-const RoomChat = ({ isGeneral }) => {
+const RoomChat = ({ isGeneral, partyId }) => {
   const [messageSocket, setMessageSocket] = useState();
   const [chatMessages, setChatMessages] = useState([]);
 
   useEffect(() => {
-    setMessageSocket(io(`${import.meta.env.VITE_SOCKET_URL}/messages`));
+    setMessageSocket(
+      io(`${import.meta.env.VITE_SOCKET_URL}/messages`, {
+        auth: { token: localStorage.getItem('token') },
+      }),
+    );
   }, []);
 
   useEffect(() => {
     if (!messageSocket) return;
     messageSocket.on('connect', () => {
       console.log('connected');
+
       if (isGeneral) {
-        messageSocket.on('messages:list', messages => {
-          console.log('messages', messages);
-        });
+        messageSocket.emit('join', 'general');
+      } else {
+        messageSocket.emit('join', partyId);
       }
+      messageSocket.on('messages:list', messages => {
+        if (!messages.data) return;
+        setChatMessages(
+          messages.data.map(message => ({
+            message: message.content,
+            sender: 'user', // change by message.username
+            senderId: message.userId,
+            direction: 'incoming', // check if message.userId === currentUserId
+            sentTime: message.createdAt,
+          })),
+        );
+      });
     });
 
     return () => {
+      if (isGeneral) {
+        messageSocket.emit('quit', 'general');
+      } else {
+        messageSocket.emit('quit', partyId);
+      }
+
       messageSocket.disconnect();
     };
-  }, [messageSocket, isGeneral]);
+  }, [messageSocket, isGeneral, partyId]);
 
   const handleUserMessage = async userMessage => {
     // à remplacer par les données de l'utilisateur connecté
     const newUserMessage = {
       message: userMessage,
       sender: 'dani', // remplacer par les données user
-      senderId: '018f1126-ee5a-7e5e-831f-f80b95b9c667', // remplacer par les données user
+      senderId: '6c7aa559-a6c8-4fe7-a07f-e92a8a3d4539', // remplacer par les données user
       direction: 'outgoing',
       sentTime: new Date().toISOString(),
     };
 
-    setChatMessages([...chatMessages, newUserMessage]);
     sendUserMessage(newUserMessage);
   };
 
   const sendUserMessage = userMessage => {
-    console.log("envoi d'un message");
     const { message, senderId } = userMessage;
     messageSocket.emit('messages:create', {
       content: message,
       userId: senderId,
+      room: isGeneral ? 'general' : partyId,
     });
   };
 
@@ -76,9 +98,9 @@ const RoomChat = ({ isGeneral }) => {
       <MainContainer style={{ borderRadius: '.6em' }}>
         <ChatContainer style={{ paddingTop: '2rem' }}>
           <MessageList>
-            <MessageSeparator>
+            {/* <MessageSeparator>
               <Text fontWeight={'bold'}>dani</Text>&nbsp; s&apos;est connecté
-            </MessageSeparator>
+            </MessageSeparator> */}
             {chatMessages.map((message, i) => {
               return (
                 <Message key={i} model={message}>
