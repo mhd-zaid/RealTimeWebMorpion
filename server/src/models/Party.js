@@ -16,9 +16,9 @@ export default function (connection) {
             foreignKey: 'winnerId',
             as: 'winner',
         });
-        Party.belongsTo(db.Room, {
-            foreignKey: 'roomId',
-            as: 'room',
+        Party.hasMany(db.Message, {
+            foreignKey: 'partyId',
+            as: 'messages',
         });
     }
   }

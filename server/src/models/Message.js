@@ -7,9 +7,9 @@ export default function (connection) {
         foreignKey: 'userId',
         as: 'user',
       });
-      Message.belongsTo(db.Room, {
-        foreignKey: 'roomId',
-        as: 'room',
+      Message.belongsTo(db.Party, {
+        foreignKey: 'partyId',
+        as: 'party',
       });
     }
   }

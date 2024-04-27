@@ -21,7 +21,7 @@ export default (io, db) => {
       await db.Message.create({
         content: data.content,
         userId: data.userId,
-        roomId: data.roomId,
+        partyId: data.partyId,
       });
       return { status: 'success', message: 'messages created' };
     });
@@ -29,7 +29,7 @@ export default (io, db) => {
     socket.emit('messages:list:room', async data => {
       await db.Message.findAll({
         where: {
-          roomId: data.roomId,
+          partyId: data.partyId,
         },
       });
       return { status: 'success', data: messages };

@@ -17,6 +17,6 @@ genericRoutes.forEach(route => {
 
 export default router => {
   router.use('/', genericMessageRouter.getRouter());
-  router.get('/room/:id',messageController(db).getRoomMessages);
+  router.get('/party/:id',messageController(db).getPartyMessages);
   return router;
 };

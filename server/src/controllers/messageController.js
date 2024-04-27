@@ -1,8 +1,8 @@
 export default (db) => ({
-    getRoomMessages: async (req, res) => {
+    getPartyMessages: async (req, res) => {
         const id = req.params.id;
         const messages = await db.Message.findAll({
-            where: { roomId: id },
+            where: { partyId: id },
             include: [
                 {
                     model: db.User,
