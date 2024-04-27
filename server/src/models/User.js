@@ -59,22 +59,6 @@ export default function (connection) {
         type: DataTypes.ENUM('H', 'F'),
         allowNull: true,
       },
-      address: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      city: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      zip: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      dateOfBirth: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
       role: {
         type: DataTypes.ENUM('admin', 'user'),
         allowNull: false,
