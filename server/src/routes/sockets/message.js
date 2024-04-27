@@ -1,16 +1,25 @@
 export default (io, db) => {
   io.of('/messages').on('connection', async socket => {
+    socket.join('global-chat');
     const broadcastMessages = async () => {
-      io.of('/messages').emit('messages:list', {
+      const messages = await db.Message.findAll(
+        {
+          where: {
+            partyId: null,
+          },
+          include: { model: db.User, attributes: ['id', 'username'], as: 'user'},
+        }
+      );
+      messages.map(message => {
+        id = message.id;
+        content = message.content;
+        userId = message.userId;
+        username = message.user.username;
+      });
+      socket.messages = messages;
+      io.to('global-chat').emit('messages:list', {
         status: 'success',
-        data: await db.Message.findAll(
-          {
-            where: {
-              partyId: null,
-            },
-            include: { model: db.User, attributes: ['id', 'username'], as: 'user'},
-          }
-        ),
+        data: messages,
       });
     };
 
