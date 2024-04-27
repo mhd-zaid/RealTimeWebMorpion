@@ -7,14 +7,14 @@ export default (io, db) => {
           where: {
             partyId: null,
           },
-          include: { model: db.User, attributes: ['id', 'username'], as: 'user'},
+          include: { model: db.User, attributes: ['id', 'userName'], as: 'user'},
         }
       );
       messages.map(message => {
-        id = message.id;
-        content = message.content;
-        userId = message.userId;
-        username = message.user.username;
+        id : message.dataValues.id;
+        content: message.dataValues.content;
+        userId: message.dataValues.userId;
+        username: message.user.dataValues.userName;
       });
       socket.messages = messages;
       io.to('global-chat').emit('messages:list', {
