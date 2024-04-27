@@ -29,7 +29,6 @@ export default () => ({
         id,
         ...req.body,
         isVerified: false,
-        loginAttempts: 0,
         role: 'user',
       });
       res
@@ -84,16 +83,6 @@ export default () => ({
           }),
         );
       }
-
-      if (!user.isActive) {
-        return next(
-          new ValidationError({
-            global:
-              "Votre compte a été désactivé. Veuillez contacter l'administrateur.",
-          }),
-        );
-      }
-
       if (!user.isVerified) {
         let content = await fs.readFile(
           `mails/validateUserAccount.txt`,
@@ -147,12 +136,6 @@ export default () => ({
           }),
         );
       }
-
-      //   const decodedToken = verifyToken(token);
-      //   if (!decodedToken) {
-      // 	return res.status(401).json({ success: false, message: 'Token invalide ou expiré.' });
-      //   }
-
       const user = await UserModel.findOne({
         where: {
           token,
@@ -206,8 +189,6 @@ export default () => ({
         },
       });
 
-      console.log('user', user);
-
       if (user !== null) {
         let content = await fs.readFile(`mails/forgetPassword.txt`, 'utf8');
         const token = createToken(user);
@@ -247,7 +228,6 @@ export default () => ({
           token: req.params.token,
         },
       });
-      console.log('user', user, req.params.token);
       if (user && user.dataValues.isVerified) {
         return res.redirect(`${process.env.CLIENT_URL}/auth/verify`, 200, {
           success: true,
