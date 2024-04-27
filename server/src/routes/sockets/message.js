@@ -1,6 +1,8 @@
 export default (io, db) => {
   io.of('/messages').on('connection', async socket => {
-    socket.join('global-chat');
+    socket.on('join',(room) => {
+      socket.join(room)
+    });
     socket.on('disconnect', () => {
       socket.leave('global-chat');
     });
