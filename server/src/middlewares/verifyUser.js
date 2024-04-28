@@ -1,40 +1,36 @@
 import db from "../models/index.js";
 import tokenUtils from "../utils/token.js";
+import ApiResponse from '../utils/apiResponse.js';
 
-const verifyUser = (io,db) => {
-  io.use(async (socket, next) => {
-    console.log("ici")
+const verifyUser = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-    const authHeader = socket.handshake.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json(new ApiResponse(false, null, null, "Vous devez être connecté"));
+  }
 
-    if (!authHeader) {
-      return next(new Error("Vous devez être connecté"));
-    }
+  if (!authHeader.startsWith('Bearer ')) {
+    return res.status(401).json(new ApiResponse(false, null, null, "Vous devez être connecté"));
+  }
 
-    if (!authHeader.startsWith('Bearer ')) {
-      return next(new Error("Vous devez être connecté"));
-    }
+  const token = authHeader.substring(7, authHeader.length);
 
-    const token = authHeader.substring(7, authHeader.length);
+  const tokenUtil = tokenUtils();
+  const userInfo = tokenUtil.verifyToken(token);
 
-    const tokenUtil = tokenUtils();
-    const userInfo = tokenUtil.verifyToken(token);
+  if (!userInfo) {
+    return res.status(401).json(new ApiResponse(false, null, null, "Vous devez être connecté"));
+  }
 
-    if (!userInfo) {
-      return next(new Error("Vous devez être connecté"));
-    }
+  const user = await db.User.findByPk(userInfo.id);
 
-    const user = await db.User.findByPk(userInfo.id);
+  if (!user) {
+    return res.status(404).json(new ApiResponse(false, null, null, "Vous devez être connecté"));
+  }
 
-    if (!user) {
-      return next(new Error("Vous devez être connecté"));
-    }
-    console.log("ici")
+  req.body.UserId = user.dataValues.id;
 
-    socket.userId = user.dataValues.id;
-
-    next();
-  });
+  next();
 };
 
 export default verifyUser;
