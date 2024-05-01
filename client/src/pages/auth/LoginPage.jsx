@@ -12,14 +12,10 @@ import {
   Button,
   Link,
 } from '@chakra-ui/react';
-import { redirect } from 'react-router-dom';
-import useToken from '../../utils/useToken';
 import { AuthContext } from '../../context/AuthContext';
 
 const LoginPage = () => {
-  const toast = useToast();
-  const { setToken } = useToken();
-  const { setIsLoggedIn } = useContext(AuthContext);
+  const { login  } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     identifier: '',
@@ -32,16 +28,6 @@ const LoginPage = () => {
     password: z.string().min(1, { message: 'Le mot de passe est requis' }),
   });
 
-  const loginUser = async credentials => {
-    return fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    }).then(data => data.json());
-  };
-
   const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prevData => ({
@@ -50,7 +36,7 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = async e => {
+  const handleLogin = async e => {
     e.preventDefault();
 
     const validationErrors = validateData(loginValidationSchema, formData);
@@ -58,35 +44,12 @@ const LoginPage = () => {
       setErrors(validationErrors);
       return;
     }
-    setErrors({});
 
-    const login = await loginUser(formData);
-    if (login.errors) {
-      setErrors(
-        login.errors || { global: "Une erreur inattendue s'est produite." },
-      );
-      setToken();
-      toast({
-        title: 'Erreur',
-        description: 'Identifiant ou mot de passe incorrect',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
+    try {
+      await login(formData);
+    } catch (error) {
+      setErrors({ global: error.message });
     }
-
-    setToken(login.data.token);
-    setIsLoggedIn(true);
-    redirect('/');
-
-    toast({
-      title: 'Connexion réussie',
-      description: 'Vous êtes maintenant connecté',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-    });
   };
 
   return (
@@ -99,7 +62,7 @@ const LoginPage = () => {
       my={8}
     >
       <Heading textTransform="uppercase">Se connecter</Heading>
-      <Flex as="form" onSubmit={handleSubmit} flexDir="column" w="30%">
+      <Flex as="form" onSubmit={handleLogin} flexDir="column" w="30%">
         <FormControl my={4}>
           <FormLabel htmlFor="identifier" mb={0}>
             Email ou Pseudo

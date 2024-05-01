@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { AuthContext } from '@/Context/AuthContext.jsx';
-import { Flex, Heading, Image, keyframes, Link } from '@chakra-ui/react';
+import { AuthContext } from '@/context/AuthContext.jsx';
+import {Button, Flex, Heading, Image, keyframes, Link} from '@chakra-ui/react';
 
 const Header = () => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, logout } = useContext(AuthContext);
 
   return (
     <Flex
@@ -106,6 +106,14 @@ const Header = () => {
             justifyContent="end"
             ml="auto"
           >
+            <Button
+              colorScheme='red'
+              mr={4}
+              onClick={logout}
+            >
+              Déconnexion
+            </Button>
+
             <Heading
               as={Link}
               href="/profile"

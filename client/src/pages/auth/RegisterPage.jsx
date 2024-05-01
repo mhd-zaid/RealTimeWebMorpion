@@ -71,10 +71,10 @@ const RegisterPage = () => {
     const registerPromise = registerUser(formData);
 
     await toast.promise(registerPromise, {
-      loading: 'Enregistrement en cours...',
+      loading: {title: 'Enregistrement en cours...', description: 'Veuillez patienter.'},
       success:
-        'Enregistrement réussi ! \n Veuillez vérifier votre boîte de réception pour activer votre compte.',
-      error: "Erreur lors de l'enregistrement",
+        {title: 'Enregistrement réussi !', description:'Veuillez vérifier votre boîte de réception pour activer votre compte.'},
+      error: {title: "Erreur lors de l'enregistrement", description: 'Veuillez réessayer plus tard.'},
     });
 
     await registerPromise.then(data => {

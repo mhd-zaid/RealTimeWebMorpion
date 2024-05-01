@@ -2,6 +2,7 @@ import GenericRouter from '../routes/genericRouter.js';
 import GenericController from '../controllers/genericController.js';
 import GenericService from '../services/genericService.js';
 import db from '../../src/models/index.js';
+import checkAuth from "../middlewares/checkAuth.js";
 
 const genericRoutes = [
   { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
@@ -16,7 +17,7 @@ const genericUserRouter = new GenericRouter(
   new GenericController(new GenericService(db.User)),
 );
 genericRoutes.forEach(route => {
-  genericUserRouter.addRoute(route, route.middlewares);
+  genericUserRouter.addRoute(route, [...route.middlewares, checkAuth()]);
 });
 
 export default router => {

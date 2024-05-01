@@ -23,20 +23,20 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
-            <Route index element={<Home />} />
+
             <Route element={<ProtectedRoute />}>
               <Route path="profile" element={<Profile />} />
+              <Route index element={<Home />} />
             </Route>
+
             <Route path="auth">
               <Route path="login" element={<LoginPage />} />
               <Route path="register" element={<RegisterPage />} />
               <Route path="forgetpassword" element={<ForgetPasswordPage />} />
-              <Route
-                path="resetpassword/:token"
-                element={<ResetPasswordPage />}
-              />
+              <Route path="resetpassword/:token" element={<ResetPasswordPage />} />
               <Route path="verify" element={<EmailVerifiedPage />} />
             </Route>
+
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>

@@ -22,6 +22,23 @@ async function verifyPassword(plainPassword, hashedPassword) {
 }
 
 export default () => ({
+  me: async (req, res, next) => {
+    const token = req.cookies.auth_token;
+
+    if (!token) {
+      return res.status(401).json({ message: "Token manquant ou invalide" });
+    }
+    try {
+      const user = verifyToken(token);
+      if (!user) {
+        return res.status(401).json({ success: false, message: "Non autorisé" });
+      }
+      res.status(200).json({ success: true, data: user });
+    } catch (error) {
+      return res.status(401).json({ message: "Token invalide" });
+    }
+  },
+
   register: async (req, res, next) => {
     try {
       const id = uuidv7();
@@ -42,6 +59,7 @@ export default () => ({
         error.name === 'SequelizeUniqueConstraintError'
       ) {
         error = ValidationError.fromSequelize(error);
+        console.log(error);
       }
       next(error);
     }
@@ -104,8 +122,8 @@ export default () => ({
       }
 
       const token = createToken(user);
-      res.cookie('jwt', token, { httpOnly: true, signed: true });
-      user.update({ token: token });
+      // res.cookie('jwt', token, { httpOnly: true, signed: true });
+      await user.update({token: token});
 
       return res.json({
         success: true,
@@ -217,11 +235,11 @@ export default () => ({
 
   verifyEmail: async (req, res, next) => {
     try {
+      console.log(req.params.token);
       const user = await UserModel.findOne({
-        where: {
-          token: req.params.token,
-        },
+        where: {token: req.params.token},
       });
+      console.log(user);
       if (user && user.dataValues.isVerified) {
         return res.redirect(`${process.env.CLIENT_URL}/auth/verify`, 200, {
           success: true,

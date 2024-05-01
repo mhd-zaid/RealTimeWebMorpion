@@ -1,9 +1,8 @@
-import { Model, DataTypes } from 'sequelize';
-import sendMail from '../controllers/mailController.js';
+import {DataTypes, Model} from 'sequelize';
 import tokenUtils from '../utils/token.js';
-import crypto from 'crypto';
 import bcryptjs from 'bcryptjs';
 import fs from 'fs/promises';
+import sendMail from "../controllers/mailController.js";
 
 const { createToken } = tokenUtils();
 
@@ -72,7 +71,7 @@ export default function (connection) {
   User.addHook('beforeCreate', async function (user) {
     const bcrypt = bcryptjs;
     const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(10));
-    const token = crypto.randomBytes(30).toString('hex');
+    const token = createToken(user);
     user.password = hash;
     user.token = token;
   });
@@ -81,8 +80,7 @@ export default function (connection) {
     if (fields.includes('password')) {
       const token = createToken(user);
       const bcrypt = bcryptjs;
-      const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(10));
-      user.password = hash;
+      user.password = await bcrypt.hash(user.password, await bcrypt.genSalt(10));
       user.token = token;
     }
   });
@@ -93,7 +91,7 @@ export default function (connection) {
       .replace('{{name}}', user.userName)
       .replace(
         '{{confirmLink}}',
-        `${process.env.SERVER_URL}/verify/${user.token}`,
+        `${process.env.SERVER_URL}/api/verify/${user.token}`,
       );
     await sendMail(user.email, 'Vérifiez votre compte', null, content);
   });

@@ -1,21 +1,15 @@
-import { useNavigate, Outlet } from 'react-router-dom';
-import useToken from '@/utils/useToken.js';
+import { useContext, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 export const ProtectedRoute = () => {
+  const { isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { token } = useToken();
 
-  // CHECK AUTH
-  if (token === null || token === undefined || token === '') {
-    setTimeout(() => {
-      navigate('/auth/login');
-    }, 1000);
-    return <h1>Redirecting...</h1>;
+  if (!isLoggedIn) {
+    navigate('/auth/login');
   }
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
+
 };
