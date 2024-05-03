@@ -3,7 +3,7 @@ import { AuthContext } from '@/context/AuthContext.jsx';
 import {Button, Flex, Heading, Image, keyframes, Link} from '@chakra-ui/react';
 
 const Header = () => {
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <Flex
@@ -19,7 +19,7 @@ const Header = () => {
         </Link>
       </Flex>
 
-      {!isLoggedIn && (
+      {!user && (
         <>
           <Heading
             as={Link}
@@ -67,7 +67,7 @@ const Header = () => {
         </>
       )}
 
-      {isLoggedIn && (
+      {user && (
         <>
           <Flex alignItems="baseline" flex={1}>
             <Heading

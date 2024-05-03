@@ -20,7 +20,8 @@ const RoomChat = ({ isGeneral, partyId }) => {
   useEffect(() => {
     setMessageSocket(
       io(`${import.meta.env.VITE_SOCKET_URL}/messages`, {
-        auth: { token: localStorage.getItem('token') },
+        auth: { token: document.cookie.split('; ').find(row => row.startsWith('auth_token=')) },
+        // auth: { token: localStorage.getItem('token') },
       }),
     );
   }, []);

@@ -14,6 +14,7 @@ import RegisterPage from './pages/auth/RegisterPage';
 import ForgetPasswordPage from './pages/auth/ForgetPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import EmailVerifiedPage from './pages/auth/EmailVerifiedPage.jsx';
+import Morpion from "@/pages/Morpion.jsx";
 
 const theme = extendTheme(extend_theme);
 
@@ -26,6 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
             <Route element={<ProtectedRoute />}>
               <Route path="profile" element={<Profile />} />
+              <Route path="room/new" element={<Morpion />} />
               <Route index element={<Home />} />
             </Route>
 

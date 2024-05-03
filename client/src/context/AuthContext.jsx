@@ -6,7 +6,6 @@ import {apiService} from "@/services/apiService.js";
 
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const toast = useToast();
@@ -17,35 +16,30 @@ export const AuthProvider = ({ children }) => {
       const response = await apiService.getUserStatus();
       if (response.success) {
         setUser(response.data);
-        setIsLoggedIn(true);
       } else {
         setUser(null);
-        setIsLoggedIn(false);
         document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         navigate('/auth/login')
       }
     } catch (error) {
       setUser(null);
-      setIsLoggedIn(false);
       console.error('Erreur lors de la récupération des informations : ', error);
     }
+
 
     // const token = document.cookie.split('; ').find(row => row.startsWith('auth_token='));
     // if(token){
     //   try{
     //     const user = jwtDecode(token.split('=')[1]);
     //     console.log(user);
-    //     setIsLoggedIn(true);
     //     setUser(user);
     //   }catch (error) {
     //     setUser(null);
-    //     setIsLoggedIn(false);
     //     navigate('/auth/login')
     //     console.error('Erreur lors de la récupération des informations');
     //   }
     // }else{
     //   setUser(null);
-    //   setIsLoggedIn(false);
     // }
 
   };
@@ -69,7 +63,6 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         document.cookie = `auth_token=${result.data.token} ; path=/`;
         setUser(result.data.user);
-        setIsLoggedIn(true);
         navigate('/profile');
         toast({
           title: 'Connexion réussie',
@@ -95,16 +88,25 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);''
-    setIsLoggedIn(false);
     document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   };
 
+  const getToken = () => {
+    const tokenFromCookie = document.cookie.split('; ').find(row => row.startsWith('auth_token='));
+    if(tokenFromCookie){
+      return tokenFromCookie.split('=')[1];
+    }
+    return null;
+  }
+
+  const token = getToken();
+
   const contextValue = {
-    isLoggedIn,
     user,
     login,
     logout,
     checkUserStatus,
+    token
   };
 
   return (

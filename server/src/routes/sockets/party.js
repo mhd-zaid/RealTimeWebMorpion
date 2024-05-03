@@ -1,10 +1,17 @@
 import { uuidv7 } from 'uuidv7';
 import checkAuthSocket from '../../middlewares/checkAuthSocket.js';
+import tokenUtils from '../../utils/token.js';
 export default (io, db) => {
   io.of("/parties")
     .use( async(socket, next) => {
-      const checkUser = await checkAuthSocket(socket, db);
-      if(checkUser === false) {
+      const { verifyToken } = tokenUtils();
+      // const checkUser = await checkAuthSocket(socket, db);
+      // if(checkUser === false) {
+      //   return next(new Error("Vous devez être connecté"));
+      // }
+      const token =  socket.handshake.auth.token;
+      const checkUser = await verifyToken(token);
+      if (!checkUser) {
         return next(new Error("Vous devez être connecté"));
       }
       socket.userId = checkUser.id;
@@ -12,10 +19,30 @@ export default (io, db) => {
     })
     .on("connection", async(socket) => {
       const parties = await db.Party.findAll({
+        include: [
+          {
+            model: db.User,
+            as: 'user1',
+            attributes: ['id', 'userName']
+          },
+          {
+            model: db.User,
+            as: 'user2',
+            attributes: ['id', 'userName']
+          },
+          {
+            model: db.User,
+            as: 'winner',
+            attributes: ['id', 'userName']
+          }
+        ],
         where: {
-          status: "searchPlayer"
+          status: "finished"
         }
-      });  
+      });
+      const now = new Date();
+
+      console.log("ENVOIE DES PARTIES", now.toISOString(), parties.dataValues);
       socket.emit("client:parties:list:all", { status: "success", data: parties });
 
       socket.on("server:parties:create", async (data) => {
