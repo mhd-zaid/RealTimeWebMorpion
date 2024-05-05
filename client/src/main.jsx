@@ -8,13 +8,16 @@ import { ProtectedRoute } from './layouts/ProtectedRoute.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import App from './App.jsx';
 import Home from './pages/HomePage';
-import Profile from './pages/ProfilePage';
+import ProfilePage from './pages/ProfilePage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ForgetPasswordPage from './pages/auth/ForgetPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import EmailVerifiedPage from './pages/auth/EmailVerifiedPage.jsx';
-import Morpion from "@/pages/Morpion.jsx";
+import GameBoardPage from "@/pages/GameBoardPage.jsx";
+import PartyOnlinePage from "@/pages/party/PartyOnlinePage.jsx";
+import PartyLocalPage from "@/pages/party/PartyLocalPage.jsx";
+import PartiesPage from "@/pages/party/PartiesPage.jsx";
 
 const theme = extendTheme(extend_theme);
 
@@ -26,8 +29,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />}>
 
             <Route element={<ProtectedRoute />}>
-              <Route path="profile" element={<Profile />} />
-              <Route path="room/new" element={<Morpion />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="gameboard">
+                <Route index element={<GameBoardPage />} />
+                <Route path="general" element={<PartiesPage />} />
+                <Route path="room" element={<PartyLocalPage />} />
+                <Route path="room/:id" element={<PartyOnlinePage />} />
+              </Route>
               <Route index element={<Home />} />
             </Route>
 

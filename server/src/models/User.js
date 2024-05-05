@@ -44,10 +44,6 @@ export default function (connection) {
           },
         },
       },
-      gender: {
-        type: DataTypes.ENUM('H', 'F'),
-        allowNull: true,
-      },
       role: {
         type: DataTypes.ENUM('admin', 'user'),
         allowNull: false,

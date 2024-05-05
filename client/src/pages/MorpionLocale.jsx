@@ -3,7 +3,7 @@ import {useContext, useEffect, useState} from "react";
 import io from "socket.io-client";
 import {AuthContext} from "@/context/AuthContext.jsx";
 
-const Morpion = () => {
+const MorpionLocale = () => {
   const [messageSocket, setMessageSocket] = useState();
   const { user, token } = useContext(AuthContext);
 
@@ -57,13 +57,13 @@ const Morpion = () => {
   const isMorpionFull = morpion.every((value) => value !== null);
   const isEnd = isMorpionFull && !winner;
 
-  const status = winner ? `Le gagnant est ${winner}!` : isEnd ? "Match nul !" : `Joueur suivant: ${isXNext ? 'X' : 'O'}`;
+  const status = winner ? `${winner === "X" ? 'Joueur1' : 'Joueur2'} a gagné !`: isEnd ? "Match nul !" : `C'est au tour de ${isXNext ? 'Joueur1' : 'Joueur2'}`;
 
   return (
     <>
       <Center h="100vh">
         <Flex direction="column" align="center">
-          <Text fontSize="2xl" mb="20px">{status}</Text>
+          <Text fontSize="2xl" mb="20px" color={"white"}>{status}</Text>
           <Grid
             templateColumns="repeat(3, 100px)"
             templateRows="repeat(3, 100px)"
@@ -81,7 +81,7 @@ const Morpion = () => {
               setIsXNext(true);
             }}
           >
-            Recommencer
+            Redémarrer le jeu
           </Button>
         </Flex>
       </Center>
@@ -89,4 +89,4 @@ const Morpion = () => {
   )
 };
 
-export default Morpion;
+export default MorpionLocale;

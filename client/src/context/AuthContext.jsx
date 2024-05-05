@@ -6,7 +6,7 @@ import {apiService} from "@/services/apiService.js";
 
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -17,12 +17,12 @@ export const AuthProvider = ({ children }) => {
       if (response.success) {
         setUser(response.data);
       } else {
-        setUser(null);
+        setUser({});
         document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         navigate('/auth/login')
       }
     } catch (error) {
-      setUser(null);
+      setUser({});
       console.error('Erreur lors de la récupération des informations : ', error);
     }
 
@@ -48,6 +48,10 @@ export const AuthProvider = ({ children }) => {
     checkUserStatus()
   }, []);
 
+  useEffect(() => {
+    checkUserStatus()
+  }, [navigate]);
+
   const login = async (credentials) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
@@ -62,8 +66,8 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         document.cookie = `auth_token=${result.data.token} ; path=/`;
-        setUser(result.data.user);
-        navigate('/profile');
+        setUser(result.data.token);
+        navigate('/gameboard');
         toast({
           title: 'Connexion réussie',
           description: 'Vous êtes maintenant connecté',
@@ -71,6 +75,7 @@ export const AuthProvider = ({ children }) => {
           duration: 5000,
           isClosable: true,
         });
+        localStorage.removeItem('currentParty')
       } else {
         console.error('Erreur lors de la tentative de connexion :', result.message);
         toast({
@@ -87,8 +92,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setUser(null);''
+    setUser({});
+    navigate('/auth/login')
     document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    localStorage.removeItem('currentParty')
   };
 
   const getToken = () => {

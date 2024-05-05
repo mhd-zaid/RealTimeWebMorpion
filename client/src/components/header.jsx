@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { AuthContext } from '@/context/AuthContext.jsx';
 import {Button, Flex, Heading, Image, keyframes, Link} from '@chakra-ui/react';
+import ChakraTheme from "@/utils/chakra-theme.js";
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
@@ -14,12 +15,12 @@ const Header = () => {
       px={8}
     >
       <Flex flex={1} mr="auto">
-        <Link h={12} href="/">
+        <Link h={12} href="/gameboard">
           <Image src="/logo.svg" alt="logo" h="full" />
         </Link>
       </Flex>
 
-      {!user && (
+      {!user.id ? (
         <>
           <Heading
             as={Link}
@@ -65,9 +66,7 @@ const Header = () => {
             </Link>
           </Flex>
         </>
-      )}
-
-      {user && (
+      ) :  (
         <>
           <Flex alignItems="baseline" flex={1}>
             <Heading

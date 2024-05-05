@@ -1,7 +1,27 @@
 import { uuidv7 } from 'uuidv7';
 import checkAuthSocket from '../../middlewares/checkAuthSocket.js';
 import tokenUtils from '../../utils/token.js';
+import {Op} from "sequelize";
 export default (io, db) => {
+
+  function generateRandomSixDigit() {
+    const random = Math.random() * 1000000;
+    const paddedString = random.toFixed(0).padStart(6, '0');
+    return paddedString.slice(-6);
+  }
+
+  function generateUniqueSixDigit(excludedNumbers) {
+    let unique = false;
+    let random;
+
+    while (!unique) {
+      random = generateRandomSixDigit();
+      unique = !excludedNumbers.includes(random);
+    }
+
+    return random;
+  }
+
   io.of("/parties")
     .use( async(socket, next) => {
       const { verifyToken } = tokenUtils();
@@ -18,6 +38,7 @@ export default (io, db) => {
       next();
     })
     .on("connection", async(socket) => {
+      // console.log("Connexion d'un utilisateur", socket.userId);
       const parties = await db.Party.findAll({
         include: [
           {
@@ -37,31 +58,128 @@ export default (io, db) => {
           }
         ],
         where: {
-          status: "finished"
+          status: "finished",
+          [Op.or]: [
+            { user1Id: socket.userId },
+            { user2Id: socket.userId },
+          ],
         }
       });
-      const now = new Date();
 
-      console.log("ENVOIE DES PARTIES", now.toISOString(), parties.dataValues);
-      socket.emit("client:parties:list:all", { status: "success", data: parties });
+      const broadcastPartiesInProgress = async () => {
+        const data = await db.Party.findAll({
+          include: [
+            {
+              model: db.User,
+              as: 'user1',
+              attributes: ['id', 'userName']
+            },
+          ],
+          where: {
+            status: "searchPlayer",
+            is_private: false
+          }
+        });
+        io.of("/parties").emit("server:parties:list:inProgress", {status: "success", data});
+      }
 
-      socket.on("server:parties:create", async (data) => {
+      socket.on('join', async room => {
+        console.log("room", room)
+        socket.join(room);
+        const data = await db.Party.findByPk(room,{
+          include: [
+            {
+              model: db.User,
+              as: 'user1',
+              attributes: ['id', 'userName']
+            },
+            {
+              model: db.User,
+              as: 'user2',
+              attributes: ['id', 'userName']
+            },
+          ]
+        });
+        socket.to(room).emit("server:parties:start", {status: "success", data});
+      })
+
+      socket.emit("server:parties:list:user", { status: "success", data: parties });
+
+      socket.on('client:parties:list:inProgress', async () => {
+        await broadcastPartiesInProgress();
+      });
+
+      socket.on('client:parties:create', async ({is_private}, callback) => {
         try {
           const id = uuidv7();
-          if (data.is_private && !data.code) {
-            throw new Error('Le code de la partie est requis.');
-          }
-          const party = await db.Party.create({ id, user1Id: socket.userId, ...data });
-          socket.emit("client:parties:create:party", { status: "success", data: party });
-        }
-        catch (error) {
-          socket.emit("client:parties:join:party", { status: "error", message: error.message });
-        }
-      });
+          let partiesInProgress = null
+          let code = null
 
-      socket.on("server:parties:join:party", async (data) => {
+          if(is_private ){
+            partiesInProgress = await db.Party.findAll({
+              attributes: ['code'],
+              where: {
+                status: "searchPlayer",
+                is_private: is_private
+              }
+            });
+            if(partiesInProgress.dataValues === undefined) {
+              code = generateRandomSixDigit();
+            }else{
+              const excludedCodes = partiesInProgress.map(party => party.code);
+              code = generateUniqueSixDigit(excludedCodes);
+            }
+          }
+
+          const symbolUser1 = Math.random() < 0.5 ? 'X' : 'O';
+          const symbolUser2 = symbolUser1 === 'X' ? 'O' : 'X';
+          const party = await db.Party.create({ id, user1Id: socket.userId, code, symbolUser1, symbolUser2, is_private });
+          await broadcastPartiesInProgress()
+          callback({ status: "success", data: party });
+        } catch (error) {
+          socket.emit('server:parties:create', { status: 'error', message: error.message });
+        }
+      })
+
+      socket.on("client:parties:join:party", async (data, callback) => {
         try {
-          const party = await db.Party.findByPk(data.id);
+          let party;
+          if(data.code){
+            party = await db.Party.findOne({
+              include: [
+                {
+                  model: db.User,
+                  as: 'user1',
+                  attributes: ['id', 'userName']
+                },
+                {
+                  model: db.User,
+                  as: 'user2',
+                  attributes: ['id', 'userName']
+                },
+              ],
+              where: {
+                code: data.code,
+                status: "searchPlayer"
+              }
+            });
+          }else{
+            party = await db.Party.findByPk(data.id, {
+              include: [
+                {
+                  model: db.User,
+                  as: 'user1',
+                  attributes: ['id', 'userName']
+                },
+                {
+                  model: db.User,
+                  as: 'user2',
+                  attributes: ['id', 'userName']
+                },
+              ]
+            });
+          }
+
           if (!party) {
             throw new Error('La partie n\'existe pas.');
           }
@@ -75,27 +193,41 @@ export default (io, db) => {
             throw new Error('La partie est déjà en cours.');
           }
 
-          const symbolUser1 = Math.random() < 0.5 ? 'X' : 'O';
-          const symbolUser2 = symbolUser1 === 'X' ? 'O' : 'X';
-
           const partyJoined = await db.Party.update({
             user2Id: socket.userId,
             status: "in progress",
-            symbolUser1: symbolUser1,
-            symbolUser2: symbolUser2
           }, {
             where: {
               id: data.id,
               status: "searchPlayer"
             },
-            returning: true
+            returning: true,
+          });
+
+          const updatedParty = await db.Party.findOne({
+            include: [
+              {
+                model: db.User,
+                as: 'user1',
+                attributes: ['id', 'userName']
+              },
+              {
+                model: db.User,
+                as: 'user2',
+                attributes: ['id', 'userName']
+              },
+            ],
+            where: {
+              id: data.id,
+            }
           });
 
           if (partyJoined[0] === 0) {
             throw new Error('La partie a déjà été rejointe par un autre joueur.');
           }
 
-          socket.emit("client:parties:join:party", { status: "success", message: partyJoined });
+          console.log("partie rejointe", updatedParty.dataValues)
+          callback({ status: "success", data: updatedParty.dataValues });
         } catch (error) {
           socket.emit("client:parties:join:party", { status: "error", message: error.message });
         }
