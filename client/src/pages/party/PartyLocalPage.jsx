@@ -14,11 +14,9 @@ import {
 import * as code from "zod";
 import {useState} from "react";
 import {z} from "zod";
-import MorpionLocale from "@/pages/MorpionLocale.jsx";
+import MorpionLocale from "@/components/morpion/MorpionLocale.jsx";
 
 const Party = () => {
-  const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [code, setCode] = useState(['', '', '', '']);
   const [error, setError] = useState('');
   const [isJoining, setIsJoining] = useState(false);
@@ -55,12 +53,7 @@ const Party = () => {
     }
     setError('');
     setIsJoining(true);
-    console.log(`Rejoindre la partie avec le code : ${fullCode}`);
   };
-
-  const searchGame = () => {
-
-  }
 
   return (
     <Flex

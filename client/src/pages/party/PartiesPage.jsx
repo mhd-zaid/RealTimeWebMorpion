@@ -9,16 +9,14 @@ import {
   TableContainer,
   Table, Thead, Tr, Th, Tbody, Td
 } from "@chakra-ui/react";
-import * as code from "zod";
 import {useContext, useEffect, useState} from "react";
-import {z} from "zod";
 import {AuthContext} from "@/context/AuthContext.jsx";
 import io from "socket.io-client";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import moment from "moment";
 
 const PartiesPage = () => {
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
   const { token, user } = useContext(AuthContext);
   const [partySocket, setPartySocket] = useState();
   const [gameInProgress, setGameInProgress] = useState([]);
@@ -50,6 +48,7 @@ const PartiesPage = () => {
 
 
   const handleCreateParty = async () => {
+    //Création d'une partie publique
     partySocket.emit('client:parties:create', { is_private: false }, (party) => {
       if (party.status === 'success') {
         navigate(`/gameboard/room/${party.data.id}`, { state: { party: party.data } });
@@ -58,8 +57,9 @@ const PartiesPage = () => {
   }
 
   const joinGame = async (game) => {
+    if(!partySocket) return;
+    //Rejoindre une partie publique en cours
     partySocket.emit("client:parties:join:party", game, (party) => {
-      console.log("party ok", party);
       if (party.status === 'success') {
         navigate(`/gameboard/room/${party.data.id}`, { state: { party: party.data } });
       }

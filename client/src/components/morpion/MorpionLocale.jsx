@@ -1,11 +1,7 @@
 import {Button, Center, Flex, Grid, Text} from "@chakra-ui/react";
-import {useContext, useEffect, useState} from "react";
-import io from "socket.io-client";
-import {AuthContext} from "@/context/AuthContext.jsx";
+import { useState} from "react";
 
 const MorpionLocale = () => {
-  const [messageSocket, setMessageSocket] = useState();
-  const { user, token } = useContext(AuthContext);
 
   const Case = ({ value, onClick }) => {
     return (

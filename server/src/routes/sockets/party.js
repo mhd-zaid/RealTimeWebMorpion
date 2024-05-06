@@ -1,6 +1,5 @@
 import { uuidv7 } from 'uuidv7';
 import checkAuthSocket from '../../middlewares/checkAuthSocket.js';
-import tokenUtils from '../../utils/token.js';
 import {Op} from "sequelize";
 export default (io, db) => {
 
@@ -24,13 +23,10 @@ export default (io, db) => {
 
   io.of("/parties")
     .use( async(socket, next) => {
-      const { verifyToken } = tokenUtils();
-      // const checkUser = await checkAuthSocket(socket, db);
-      // if(checkUser === false) {
-      //   return next(new Error("Vous devez être connecté"));
-      // }
-      const token =  socket.handshake.auth.token;
-      const checkUser = await verifyToken(token);
+      const checkUser = await checkAuthSocket(socket, db);
+      if(checkUser === false) {
+        return next(new Error("Vous devez être connecté"));
+      }
       if (!checkUser) {
         return next(new Error("Vous devez être connecté"));
       }
@@ -38,7 +34,6 @@ export default (io, db) => {
       next();
     })
     .on("connection", async(socket) => {
-      // console.log("Connexion d'un utilisateur", socket.userId);
       const parties = await db.Party.findAll({
         include: [
           {
@@ -84,7 +79,6 @@ export default (io, db) => {
       }
 
       socket.on('join', async room => {
-        console.log("room", room)
         socket.join(room);
         const data = await db.Party.findByPk(room,{
           include: [
@@ -143,7 +137,8 @@ export default (io, db) => {
 
       socket.on("client:parties:join:party", async (data, callback) => {
         try {
-          let party;
+          let party
+
           if(data.code){
             party = await db.Party.findOne({
               include: [
@@ -164,7 +159,7 @@ export default (io, db) => {
               }
             });
           }else{
-            party = await db.Party.findByPk(data.id, {
+            party = await db.Party.findOne({
               include: [
                 {
                   model: db.User,
@@ -176,7 +171,11 @@ export default (io, db) => {
                   as: 'user2',
                   attributes: ['id', 'userName']
                 },
-              ]
+              ],
+              where: {
+                id: data.id,
+                status: "searchPlayer"
+              }
             });
           }
 
@@ -198,7 +197,7 @@ export default (io, db) => {
             status: "in progress",
           }, {
             where: {
-              id: data.id,
+              id: party.id,
               status: "searchPlayer"
             },
             returning: true,
@@ -218,7 +217,7 @@ export default (io, db) => {
               },
             ],
             where: {
-              id: data.id,
+              id: party.id,
             }
           });
 
@@ -226,7 +225,6 @@ export default (io, db) => {
             throw new Error('La partie a déjà été rejointe par un autre joueur.');
           }
 
-          console.log("partie rejointe", updatedParty.dataValues)
           callback({ status: "success", data: updatedParty.dataValues });
         } catch (error) {
           socket.emit("client:parties:join:party", { status: "error", message: error.message });

@@ -21,9 +21,9 @@ import {useNavigate} from "react-router-dom";
 const GameBoardPage = () => {
   const navigate  = useNavigate();
 
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode, } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [code, setCode] = useState(Array(6));
+  const [code, setCode] = useState(Array(6).fill(''));
   const [error, setError] = useState('');
   const [isJoining, setIsJoining] = useState(false);
 
@@ -41,7 +41,7 @@ const GameBoardPage = () => {
     .length(6, 'Le code doit contenir 6 chiffres')
     .regex(/^\d{6}$/, 'Le code doit contenir exactement 6 chiffres');
 
-  const joinGame = () => {
+  const requestCode = () => {
     onOpen();
   }
 
@@ -59,7 +59,7 @@ const GameBoardPage = () => {
     }
   };
 
-  const handleJoin = () => {
+  const handleJoin = async () => {
     const fullCode = code.join('');
     const validation = sixDigitCodeSchema.safeParse(fullCode);
     if (!validation.success) {
@@ -68,18 +68,34 @@ const GameBoardPage = () => {
     }
     setError('');
     setIsJoining(true);
-    console.log(`Rejoindre la partie avec le code : ${fullCode}`);
+    await joinGame(fullCode)
   };
 
+  const joinGame = async (fullCode) => {
+    if(!partySocket) return;
+    partySocket.emit("client:parties:join:party", {code: fullCode}, (party) => {
+      if (party.status === 'success') {
+        navigate(`/gameboard/room/${party.data.id}`, { state: { party: party.data } });
+      }
+    })
+  }
   // createPrivateGame
   const createPrivateGame = () => {
+    partySocket.emit('client:parties:create', { is_private: true }, (party) => {
+      if (party.status === 'success') {
+        navigate(`/gameboard/room/${party.data.id}`, { state: { party: party.data } });
+      }
+    })
+  };
+
+  useEffect(() => {
     if (!user) return;
     setPartySocket(
       io(`${import.meta.env.VITE_SOCKET_URL}/parties`, {
         auth: { token: token },
       }),
     )
-  };
+  }, []);
 
   useEffect(() => {
     if (!partySocket) return;
@@ -87,7 +103,6 @@ const GameBoardPage = () => {
       partySocket.emit('server:parties:create', { is_private: true });
 
       partySocket.on('client:parties:create:party', party => {
-        console.log("party", party);
         if (party.status === 'success') {
           navigate(`room/${party.data.id}`, { state: { party: party.data } });
         }
@@ -160,7 +175,7 @@ const GameBoardPage = () => {
             colorScheme="green"
             variant="solid"
             size="lg"
-            onClick={() => joinGame()}
+            onClick={() => requestCode()}
           >
             Rejoindre une partie privée
           </Button>

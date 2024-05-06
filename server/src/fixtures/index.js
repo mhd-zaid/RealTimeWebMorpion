@@ -89,8 +89,6 @@ const loadParties = async () => {
         createdAt: faker.date.recent(),
       };
 
-      console.log("new party", newParty)
-
       parties.push(db.Party.create(newParty));
     }
 

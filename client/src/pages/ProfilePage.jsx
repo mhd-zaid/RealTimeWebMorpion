@@ -7,7 +7,7 @@ import {
   TableContainer,
   Tbody,
   Td,
-  Text,
+  Text, Tfoot,
   Th,
   Thead,
   Tr, useColorMode,
@@ -19,12 +19,17 @@ import {AuthContext} from "@/context/AuthContext.jsx";
 import moment from "moment/moment.js";
 import 'moment/locale/fr';
 import {useNavigate} from "react-router-dom";
+import Pagination from "@/components/Pagination.jsx";
 
 const ProfilePage = () => {
-  const { colorMode} = useColorMode();
+  const { colorMode } = useColorMode();
   const { token, user } = useContext(AuthContext);
   const [partySocket, setPartySocket] = useState();
   const [gameHistory, setGameHistory] = useState([]);
+  const [games, setGames] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const [nbParties, setNbParties] = useState(0);
   const navigate  = useNavigate();
   moment.locale('fr');
 
@@ -47,11 +52,16 @@ const ProfilePage = () => {
           ...game,
           createdAt: moment(game.createdAt).format('lll'),
         }));
-
-        setGameHistory(games);
+        setNbParties(parties.data.length);
+        setGames(games);
+        setGameHistory(games.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
       });
     });
   }, [partySocket]);
+
+  useEffect(() => {
+    setGameHistory(games.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+  }, [currentPage]);
 
   return (
     <>
@@ -120,6 +130,17 @@ const ProfilePage = () => {
                       </Tr>
                     ))}
                   </Tbody>
+                  <Tfoot>
+                    <Pagination
+                      totalPages={Math.ceil(nbParties / itemsPerPage)}
+                      currentPage={currentPage}
+                      onPageChange={(newPage) => {
+                        if (newPage >= 1 && newPage <= Math.ceil(nbParties / itemsPerPage)) {
+                          setCurrentPage(newPage);
+                        }
+                      }}
+                    />
+                  </Tfoot>
                 </Table>
               </TableContainer>
             </Center>

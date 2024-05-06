@@ -14,7 +14,6 @@ export default (io,db) => {
 
       socket.on('join', async room => {
         socket.join(room);
-          console.log("room", room);
         const mooves = await db.MoovePlay.findAll({ where: { partyId: room } });
         const lastMoveUserId = await db.MoovePlay.findOne({ attributes: ["moveUserId"],where: { partyId: room }, order: [['createdAt', 'DESC']] });
 

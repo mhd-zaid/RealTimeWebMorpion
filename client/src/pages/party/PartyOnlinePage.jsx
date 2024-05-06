@@ -14,7 +14,7 @@ import {
 import * as code from "zod";
 import {useContext, useEffect, useState} from "react";
 import {z} from "zod";
-import MorpionOnline from "@/pages/MorpionOnline.jsx";
+import MorpionOnline from "@/components/morpion/MorpionOnline.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import io from "socket.io-client";
 import {AuthContext} from "@/context/AuthContext.jsx";
@@ -46,7 +46,6 @@ const PartyOnline = ({game}) => {
   useEffect(() => {
     if (!partyOnlineSocket) return;
     partyOnlineSocket.on('connect', () => {
-      console.log('connected to party', party.id);
 
       partyOnlineSocket.emit('join', party.id);
 

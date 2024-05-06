@@ -25,7 +25,7 @@ const MorpionOnline = ({party}) => {
   const [winner, setWinner] = useState(null);
   const navigate = useNavigate();
 
-  const Case = ({ value, row, column, onClick }) => {
+  const Case = ({ value, onClick }) => {
     return (
       <Button
         w="100px"
@@ -45,7 +45,8 @@ const MorpionOnline = ({party}) => {
   }
 
   const handleConfirmQuit = () => {
-    console.log("Quitter la partie");
+    localStorage.removeItem('currentParty');
+    navigate('/gameboard');
   };
 
   useEffect(() => {
@@ -60,11 +61,10 @@ const MorpionOnline = ({party}) => {
   useEffect(() => {
     if (!morpionSocket) return;
     morpionSocket.on('connect', () => {
-
+      //Rejoins une room
       morpionSocket.emit("join", party.id);
-
+      //Récupération de l'état de la partie
       morpionSocket.on('server:morpion:state',  result => {
-        console.log("result", result);
         const mooves = result.data.mooves;
         const newMorpion = morpion.map((r, rIndex) =>
           r.map((cell, cIndex) => {
@@ -89,14 +89,13 @@ const MorpionOnline = ({party}) => {
 
   const handleClick = (row, col) => {
     if (morpion[row][col] || playerTurn !== user.id) return;
-
+    //Envoi du coup joué
     morpionSocket.emit("client:morpion:mooveplay:create", {
       partyId: party.id,
       numerousLine: row,
       numerousColumn: col,
       symbol: party.user1Id === user.id ? party.symbolUser1 : party.symbolUser2
     }, moove => {
-      console.log("moove", moove);
       if (moove.status === 'success') {
         const newMorpion = morpion.map((r, rIndex) =>
           r.map((cell, cIndex) =>
@@ -105,7 +104,6 @@ const MorpionOnline = ({party}) => {
         );
         setMorpion(newMorpion);
         setPlayerTurn(playerTurn === party.user1Id ? party.user2Id : party.user1Id);
-        console.log("moove", moove);
         if (moove.data.status === "finished") {
           setPlayerTurn(null);
           setWinner(moove.data.winnerId);
@@ -130,13 +128,13 @@ const MorpionOnline = ({party}) => {
           ) : (
             <>
               <Text fontSize="2xl" mb="20px">{
-                  winner === user.id ?
-                    "Vous avez gagné !" :
-                    winner !== null ?
-                  `Le gagnant est ${winner === party.user1Id ? party.user1?.userName : party.user2?.userName}` :
-                  playerTurn === user.id ?
-                    "C'est à vous !" :
-                    `Au tour de ${user.id === party.user1Id ? party.user2?.userName : party.user1?.userName}`
+                winner === user.id ?
+                  "Vous avez gagné !" :
+                  winner !== null ?
+                    `Le gagnant est ${winner === party.user1Id ? party.user1?.userName : party.user2?.userName}` :
+                    playerTurn === user.id ?
+                      "C'est à vous !" :
+                      `Au tour de ${user.id === party.user1Id ? party.user2?.userName : party.user1?.userName}`
               }</Text>
               <Grid
                 templateColumns="repeat(3, 100px)"
@@ -149,8 +147,6 @@ const MorpionOnline = ({party}) => {
                     <Case
                       key={`${rowIndex}-${columnIndex}`}
                       value={value}
-                      row={rowIndex}
-                      column={columnIndex}
                       onClick={() => handleClick(rowIndex, columnIndex)}
                     />
                   ))
@@ -174,9 +170,9 @@ const MorpionOnline = ({party}) => {
             <Text>Si vous quittez, vous perdrez le progrès de la partie en cours.</Text>
           </ModalBody>
           <ModalFooter>
-            <Text as={"u"} onClick={handleConfirmQuit} mr={4}>
+            <Button bg={"transparent"}  onClick={handleConfirmQuit} mr={4}>
               Quitter
-            </Text>
+            </Button>
             <Button colorScheme="blue" onClick={onClose} ml={3}>
               Rester
             </Button>

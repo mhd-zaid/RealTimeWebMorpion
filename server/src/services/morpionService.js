@@ -54,8 +54,6 @@ class MorpionService {
       board[moove.numerousLine][moove.numerousColumn] = moove.symbol;
     });
 
-    console.log(board)
-
     for (let i = 0; i < 3; i++) {
       if (board[i][0] === symbol && board[i][1] === symbol && board[i][2] === symbol) {
         return true;

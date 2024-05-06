@@ -4,7 +4,6 @@ import ApiResponse from '../utils/apiResponse.js';
 
 const verifyUser = async (req, res, next) => {
   const authHeader = req.headers.authorization;
-  console.log("token in cookie", req.cookies.auth_token);
 
   if (!authHeader) {
     return res.status(401).json(new ApiResponse(false, null, null, "Vous devez être connecté"));
