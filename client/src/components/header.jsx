@@ -15,7 +15,7 @@ const Header = () => {
       px={8}
     >
       <Flex flex={1} mr="auto">
-        <Link h={12} href="/gameboard">
+        <Link h={12} href={user.id ? "/gameboard" : "/auth/login"}>
           <Image src="/logo.svg" alt="logo" h="full" />
         </Link>
       </Flex>
