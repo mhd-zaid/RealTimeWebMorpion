@@ -21,8 +21,9 @@ const MorpionOnline = ({party}) => {
   const [morpionSocket, setMorpionSocket] = useState();
   const [morpion, setMorpion] = useState(Array(3).fill(null).map(() => Array(3).fill(null)));
   const [playerTurn, setPlayerTurn] = useState(party.user1Id);
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [winner, setWinner] = useState(null);
+  const [isOpenModalEndGame, setIsOpenModalEndGame] = useState(false);
+  const [isOpenModalQuitGame, setIsOpenModalQuitGame] = useState(false);
   const navigate = useNavigate();
 
   const Case = ({ value, onClick }) => {
@@ -41,8 +42,12 @@ const MorpionOnline = ({party}) => {
 
 
   const quitGame = () => {
-    onOpen();
+    setIsOpenModalQuitGame(!isOpenModalQuitGame);
   }
+
+  useEffect(() => {
+    if (winner) setIsOpenModalEndGame(true);
+  }, [winner]);
 
   const handleConfirmQuit = () => {
     localStorage.removeItem('currentParty');
@@ -161,7 +166,7 @@ const MorpionOnline = ({party}) => {
         </Flex>
       </Center>
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
+      <Modal isOpen={isOpenModalQuitGame} onClose={!isOpenModalQuitGame} isCentered={true}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Voulez-vous quitter la partie?</ModalHeader>
@@ -173,8 +178,29 @@ const MorpionOnline = ({party}) => {
             <Button bg={"transparent"}  onClick={handleConfirmQuit} mr={4}>
               Quitter
             </Button>
-            <Button colorScheme="blue" onClick={onClose} ml={3}>
+            <Button colorScheme="blue" onClick={quitGame} ml={3}>
               Rester
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenModalEndGame} isCentered={true}  onClose={handleConfirmQuit}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Partie terminée</ModalHeader>
+          <ModalBody>
+            <Text>{winner === user.id ? (
+              "Vous avez gagné !"
+            ) : winner !== null ? (
+              `Le gagnant est ${winner === party.user1Id ? party.user1?.userName : party.user2?.userName}`
+            ) : (
+              `La partie est terminée`
+            )}</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme={'red'} onClick={handleConfirmQuit} mr={4}>
+              Quitter
             </Button>
           </ModalFooter>
         </ModalContent>
