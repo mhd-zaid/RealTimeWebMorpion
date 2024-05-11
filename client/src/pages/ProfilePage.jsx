@@ -87,7 +87,7 @@ const ProfilePage = () => {
           ) }
 
             <Flex direction="column" align="center" w={"full"}>
-              <Button colorScheme="teal" variant="solid"  w={"2xl"} m={4} onClick={() => navigate("/gameboard")}>
+              <Button colorScheme="teal" variant="solid"  w={"2xl"} m={4} onClick={() => navigate("/")}>
                 Go to game board
               </Button>
             </Flex>

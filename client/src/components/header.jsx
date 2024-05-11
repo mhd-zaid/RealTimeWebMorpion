@@ -71,7 +71,7 @@ const Header = () => {
           <Flex alignItems="baseline" flex={1}>
             <Heading
               as={Link}
-              href={'/gameboard/general'}
+              href={'/general'}
               pos="relative"
               mixBlendMode="multiply"
               display="flex"

@@ -51,7 +51,7 @@ const PartiesPage = () => {
     //Création d'une partie publique
     partySocket.emit('client:parties:create', { is_private: false }, (party) => {
       if (party.status === 'success') {
-        navigate(`/gameboard/room/${party.data.id}`, { state: { party: party.data } });
+        navigate(`/room/${party.data.id}`, { state: { party: party.data } });
       }
     })
   }
@@ -61,7 +61,7 @@ const PartiesPage = () => {
     //Rejoindre une partie publique en cours
     partySocket.emit("client:parties:join:party", game, (party) => {
       if (party.status === 'success') {
-        navigate(`/gameboard/room/${party.data.id}`, { state: { party: party.data } });
+        navigate(`/room/${party.data.id}`, { state: { party: party.data } });
       }
     })
   }

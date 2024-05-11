@@ -76,7 +76,7 @@ const GameBoardPage = () => {
     if(!partySocket) return;
     partySocket.emit("client:parties:join:party", {code: fullCode}, (party) => {
       if (party.status === 'success') {
-        navigate(`/gameboard/room/${party.data.id}`, { state: { party: party.data } });
+        navigate(`/room/${party.data.id}`, { state: { party: party.data } });
       }
     })
   }
@@ -84,7 +84,7 @@ const GameBoardPage = () => {
   const createPrivateGame = () => {
     partySocket.emit('client:parties:create', { is_private: true }, (party) => {
       if (party.status === 'success') {
-        navigate(`/gameboard/room/${party.data.id}`, { state: { party: party.data } });
+        navigate(`/room/${party.data.id}`, { state: { party: party.data } });
       }
     })
   };
@@ -147,7 +147,7 @@ const GameBoardPage = () => {
               colorScheme="teal"
               variant="solid"
               size="lg"
-              onClick={() => navigate('gameboard/room')}
+              onClick={() => navigate('room')}
             >
               2 joueurs
             </Button>
@@ -158,7 +158,7 @@ const GameBoardPage = () => {
               colorScheme="blue"
               variant="solid"
               size="lg"
-              onClick={() => navigate('gameboard/general')}
+              onClick={() => navigate('general')}
             >
               Jouer en ligne
             </Button>

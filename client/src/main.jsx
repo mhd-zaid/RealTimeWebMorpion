@@ -31,13 +31,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route element={<ProtectedRoute />}>
               <Route index element={<GameBoardPage />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="gameboard">
-                <Route index element={<GameBoardPage />} />
-                <Route path="general" element={<PartiesPage />} />
-                <Route path="room" element={<PartyLocalPage />} />
-                <Route path="room/:id" element={<PartyOnlinePage />} />
-                <Route path={"chat"} element={<Home />} />
-              </Route>
+              <Route index element={<GameBoardPage />} />
+              <Route path="general" element={<PartiesPage />} />
+              <Route path="room" element={<PartyLocalPage />} />
+              <Route path="room/:id" element={<PartyOnlinePage />} />
+              <Route path={"chat"} element={<Home />} />
             </Route>
           </Route>
 

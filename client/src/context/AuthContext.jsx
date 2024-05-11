@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         document.cookie = `auth_token=${result.data.token} ; path=/`;
         setUser(result.data.token);
-        navigate('/gameboard');
+        navigate('/');
         toast({
           title: 'Connexion réussie',
           description: 'Vous êtes maintenant connecté',

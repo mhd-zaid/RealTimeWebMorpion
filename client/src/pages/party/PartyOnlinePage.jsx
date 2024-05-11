@@ -44,7 +44,7 @@ const PartyOnline = () => {
 
   useEffect(() => {
     if (!party) {
-      navigate('/gameboard');
+      navigate('/');
       return;
     }
 
@@ -79,7 +79,7 @@ const PartyOnline = () => {
   }, [partyOnlineSocket]);
 
   if (party === null) {
-    navigate('/gameboard');
+    navigate('/');
     return;
   }
 

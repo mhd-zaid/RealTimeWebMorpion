@@ -58,7 +58,7 @@ const MorpionOnline = ({party}) => {
   const handleConfirmQuit = () => {
     morpionSocket.emit('client:parties:cancel:party');
     localStorage.removeItem('currentParty');
-    navigate('/gameboard');
+    navigate('/');
   };
 
   useEffect(() => {
