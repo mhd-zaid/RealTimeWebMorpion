@@ -15,7 +15,7 @@ const Header = () => {
       px={8}
     >
       <Flex flex={1} mr="auto">
-        <Link h={12} href={user.id ? "/gameboard" : "/auth/login"}>
+        <Link h={12} href={user.id ? "/" : "/auth/login"}>
           <Image src="/logo.svg" alt="logo" h="full" />
         </Link>
       </Flex>
@@ -71,7 +71,7 @@ const Header = () => {
           <Flex alignItems="baseline" flex={1}>
             <Heading
               as={Link}
-              href={'/room/new'}
+              href={'/gameboard/general'}
               pos="relative"
               mixBlendMode="multiply"
               display="flex"

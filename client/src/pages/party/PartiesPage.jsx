@@ -75,7 +75,7 @@ const PartiesPage = () => {
         bg={'gray.900'}
       >
         <VStack>
-          {gameInProgress.length === 0 && (
+          {gameInProgress.length === 0 ? (
             <Center>
               <Box w={"2xl"}>
                 <Flex direction="column">
@@ -85,13 +85,16 @@ const PartiesPage = () => {
                 </Flex>
               </Box>
             </Center>
-          ) }
-
-          <Flex direction="column" align="center" w={"full"}>
-            <Text fontSize="2xl" fontWeight="bold" color={colorMode === 'light' ? 'white' : 'gray.800'}>
-              Parties en cours 🎮
-            </Text>
-          </Flex>
+          ) : (
+            <Center>
+              <Box w={"2xl"}>
+                <Flex direction="column">
+                  <Text fontSize="xl" fontWeight="bold" m={4}  color={colorMode === 'light' ? 'white' : 'gray.800'}>Parties en cours 🎮</Text>
+                  <Text fontSize="md" m={4}  color={colorMode === 'light' ? 'white' : 'gray.800'}>Vous trouverez ci-dessous la liste des parties en cours. Rejoignez une partie pour commencer à jouer ou créez une nouvelle partie pour défier des joueurs en liigne !</Text>
+                </Flex>
+              </Box>
+            </Center>
+          )}
 
           <Center>
             <TableContainer borderRadius={10} w={gameInProgress.length > 0 ? "full" : "2xl"}>

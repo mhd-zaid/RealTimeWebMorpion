@@ -9,7 +9,7 @@ import {
   ModalFooter,
   Modal,
   ModalOverlay,
-  ModalContent, ModalHeader, Input, ModalCloseButton, ModalBody, HStack, useDisclosure, Img, Center
+  ModalContent, ModalHeader, Input, ModalCloseButton, ModalBody, HStack, useDisclosure, Img, Center, Container
 } from "@chakra-ui/react";
 import * as code from "zod";
 import {useContext, useEffect, useState} from "react";
@@ -17,6 +17,7 @@ import {z} from "zod";
 import {AuthContext} from "@/context/AuthContext.jsx";
 import io from "socket.io-client";
 import {useNavigate} from "react-router-dom";
+import RoomChat from "@/components/room-chat.jsx";
 
 const GameBoardPage = () => {
   const navigate  = useNavigate();
@@ -113,74 +114,81 @@ const GameBoardPage = () => {
 
   return (
     <>
-      <Flex
-        align="center"
-        justify="center"
-        direction={"column"}
+      <HStack
+        spacing={4}
+        p={4}
+        justify="flex-end"
         h={"full"}
-        bg={'gray.900'}
-      >
-        <Text fontSize="5xl" mb={20}  color={colorMode === 'light' ? 'white' : 'gray.800'}>Bienvenue sur le jeu de Tic Tac Toe!</Text>
-        <VStack
-          spacing={8}
-          padding={8}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
-          boxShadow="xl"
-          rounded="lg"
+        bg={'gray.900'}>
+        <Flex
+          align="center"
+          justify="center"
+          direction={"column"}
         >
-          <Heading as="h1" size="lg" color={colorMode === 'light' ? 'black' : 'white'}>
-            Choisissez votre mode de jeu
-          </Heading>
-
-          <Text fontSize="md" color={colorMode === 'light' ? 'gray.600' : 'gray.400'}>
-            Sélectionnez l'un des modes ci-dessous pour commencer à jouer au morpion.
-          </Text>
-
-          <Button
-            w={"sm"}
-            leftIcon={<Icon icon="mdi:users" fontSize={30} />}
-            colorScheme="teal"
-            variant="solid"
-            size="lg"
-            onClick={() => navigate('room')}
+          <Text fontSize="5xl" mb={20}  color={colorMode === 'light' ? 'white' : 'gray.800'}>Bienvenue sur le jeu de Tic Tac Toe!</Text>
+          <VStack
+            spacing={8}
+            padding={8}
+            bg={colorMode === 'light' ? 'white' : 'gray.800'}
+            boxShadow="xl"
+            rounded="lg"
           >
-            2 joueurs
-          </Button>
+            <Heading as="h1" size="lg" color={colorMode === 'light' ? 'black' : 'white'}>
+              Choisissez votre mode de jeu
+            </Heading>
 
-          <Button
-            w={"sm"}
-            leftIcon={<Icon icon="fluent-mdl2:join-online-meeting" fontSize={30}/>}
-            colorScheme="blue"
-            variant="solid"
-            size="lg"
-            onClick={() => navigate('general')}
-          >
-            Jouer en ligne
-          </Button>
+            <Text fontSize="md" color={colorMode === 'light' ? 'gray.600' : 'gray.400'}>
+              Sélectionnez l'un des modes ci-dessous pour commencer à jouer au morpion.
+            </Text>
 
-          <Button
-            w={"sm"}
-            leftIcon={<Icon icon="mdi:account-multiple-plus" fontSize={30}/>}
-            colorScheme="orange"
-            variant="solid"
-            size="lg"
-            onClick={() => createPrivateGame()}
-          >
-            Créer une partie privée
-          </Button>
+            <Button
+              w={"sm"}
+              leftIcon={<Icon icon="mdi:users" fontSize={30} />}
+              colorScheme="teal"
+              variant="solid"
+              size="lg"
+              onClick={() => navigate('gameboard/room')}
+            >
+              2 joueurs
+            </Button>
 
-          <Button
-            w={"sm"}
-            leftIcon={<Icon icon="fa-solid:door-open" />}
-            colorScheme="green"
-            variant="solid"
-            size="lg"
-            onClick={() => requestCode()}
-          >
-            Rejoindre une partie privée
-          </Button>
-        </VStack>
-      </Flex>
+            <Button
+              w={"sm"}
+              leftIcon={<Icon icon="fluent-mdl2:join-online-meeting" fontSize={30}/>}
+              colorScheme="blue"
+              variant="solid"
+              size="lg"
+              onClick={() => navigate('gameboard/general')}
+            >
+              Jouer en ligne
+            </Button>
+
+            <Button
+              w={"sm"}
+              leftIcon={<Icon icon="mdi:account-multiple-plus" fontSize={30}/>}
+              colorScheme="orange"
+              variant="solid"
+              size="lg"
+              onClick={() => createPrivateGame()}
+            >
+              Créer une partie privée
+            </Button>
+
+            <Button
+              w={"sm"}
+              leftIcon={<Icon icon="fa-solid:door-open" />}
+              colorScheme="green"
+              variant="solid"
+              size="lg"
+              onClick={() => requestCode()}
+            >
+              Rejoindre une partie privée
+            </Button>
+          </VStack>
+        </Flex>
+      </HStack>
+
+
 
       <Modal isOpen={isOpen} onClose={() => {onClose(); setIsJoining(false); setCode(Array(6))}} isCentered={true}>
         <ModalOverlay />

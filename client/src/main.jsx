@@ -26,19 +26,22 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ChakraProvider theme={theme}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />}>
 
+          <Route path="/" element={<App />}>
             <Route element={<ProtectedRoute />}>
+              <Route index element={<GameBoardPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="gameboard">
                 <Route index element={<GameBoardPage />} />
                 <Route path="general" element={<PartiesPage />} />
                 <Route path="room" element={<PartyLocalPage />} />
                 <Route path="room/:id" element={<PartyOnlinePage />} />
+                <Route path={"chat"} element={<Home />} />
               </Route>
-              <Route index element={<Home />} />
             </Route>
+          </Route>
 
+          <Route path="/" element={<App />}>
             <Route path="auth">
               <Route path="login" element={<LoginPage />} />
               <Route path="register" element={<RegisterPage />} />

@@ -7,21 +7,22 @@ import {
   MessageInput,
   MessageSeparator,
 } from '@chatscope/chat-ui-kit-react';
-import { useEffect, useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import { Box, Text, useToast } from '@chakra-ui/react';
 import io from 'socket.io-client';
 import stringToColor from '../utils/stringToColor';
+import {AuthContext} from "@/context/AuthContext.jsx";
 
 const RoomChat = ({ isGeneral, partyId }) => {
   const toast = useToast();
+  const { token } = useContext(AuthContext);
   const [messageSocket, setMessageSocket] = useState();
   const [chatMessages, setChatMessages] = useState([]);
 
   useEffect(() => {
     setMessageSocket(
       io(`${import.meta.env.VITE_SOCKET_URL}/messages`, {
-        auth: { token: document.cookie.split('; ').find(row => row.startsWith('auth_token=')) },
-        // auth: { token: localStorage.getItem('token') },
+        auth: token
       }),
     );
   }, []);

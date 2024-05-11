@@ -9,7 +9,18 @@ import {
   ModalFooter,
   Modal,
   ModalOverlay,
-  ModalContent, ModalHeader, Input, ModalCloseButton, ModalBody, HStack, useDisclosure, Img, Center, useToast, position
+  ModalContent,
+  ModalHeader,
+  Input,
+  ModalCloseButton,
+  ModalBody,
+  HStack,
+  useDisclosure,
+  Img,
+  Center,
+  useToast,
+  position,
+  Container
 } from "@chakra-ui/react";
 import * as code from "zod";
 import {useContext, useEffect, useState} from "react";
@@ -19,14 +30,15 @@ import {useLocation, useNavigate} from "react-router-dom";
 import io from "socket.io-client";
 import {AuthContext} from "@/context/AuthContext.jsx";
 
-const PartyOnline = ({game}) => {
+const PartyOnline = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const {user, token} = useContext(AuthContext);
   const location = useLocation();
   const [party, setParty] = useState(() => {
     const savedParty = localStorage.getItem('currentParty');
-    return savedParty ? JSON.parse(savedParty) : location.state.party;
+    const locationParty = location.state && location.state.party;
+    return savedParty ? JSON.parse(savedParty) : locationParty || null;
   });
   const [partyOnlineSocket, setPartyOnlineSocket] = useState();
 
@@ -65,6 +77,11 @@ const PartyOnline = ({game}) => {
       });
     });
   }, [partyOnlineSocket]);
+
+  if (party === null) {
+    navigate('/gameboard');
+    return;
+  }
 
   return (
     <Flex

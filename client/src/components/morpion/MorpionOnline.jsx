@@ -22,6 +22,7 @@ const MorpionOnline = ({party}) => {
   const [morpion, setMorpion] = useState(Array(3).fill(null).map(() => Array(3).fill(null)));
   const [playerTurn, setPlayerTurn] = useState(party.user1Id);
   const [winner, setWinner] = useState(null);
+  const [isDraw, setIsDraw] = useState(false);
   const [isOpenModalEndGame, setIsOpenModalEndGame] = useState(false);
   const [isOpenModalQuitGame, setIsOpenModalQuitGame] = useState(false);
   const navigate = useNavigate();
@@ -46,10 +47,16 @@ const MorpionOnline = ({party}) => {
   }
 
   useEffect(() => {
-    if (winner) setIsOpenModalEndGame(true);
-  }, [winner]);
+    if (winner || isDraw) {
+      setIsOpenModalEndGame(true);
+      setTimeout(() => {
+        handleConfirmQuit();
+      }, 5000);
+    }
+  }, [winner, isDraw]);
 
   const handleConfirmQuit = () => {
+    morpionSocket.emit('client:parties:cancel:party');
     localStorage.removeItem('currentParty');
     navigate('/gameboard');
   };
@@ -78,10 +85,17 @@ const MorpionOnline = ({party}) => {
           })
         );
         setMorpion(newMorpion);
-        const moovePlated = result.data.moovePlayed
-        if (moovePlated.status === "finished") {
+
+        const moovePlayed = result.data.moovePlayed
+        if (!moovePlayed) return;
+
+        if (moovePlayed.status === "finished") {
           setPlayerTurn(null);
-          setWinner(moovePlated.winnerId);
+          setWinner(moovePlayed.winnerId);
+          localStorage.removeItem('currentParty');
+        }else if(moovePlayed.status === "draw") {
+          setPlayerTurn(playerTurn === party.user1Id ? party.user2Id : party.user1Id);
+          setIsDraw(true);
           localStorage.removeItem('currentParty');
         }else{
           const turn = mooves.length % 2 === 0 ? party.user1Id : party.user2Id;
@@ -114,6 +128,11 @@ const MorpionOnline = ({party}) => {
           setWinner(moove.data.winnerId);
           localStorage.removeItem('currentParty');
         }
+        else if (moove.data.status === "draw") {
+          setPlayerTurn(playerTurn === party.user1Id ? party.user2Id : party.user1Id);
+          setIsDraw(true);
+          localStorage.removeItem('currentParty');
+        }
       }
     });
   };
@@ -137,9 +156,11 @@ const MorpionOnline = ({party}) => {
                   "Vous avez gagné !" :
                   winner !== null ?
                     `Le gagnant est ${winner === party.user1Id ? party.user1?.userName : party.user2?.userName}` :
-                    playerTurn === user.id ?
-                      "C'est à vous !" :
-                      `Au tour de ${user.id === party.user1Id ? party.user2?.userName : party.user1?.userName}`
+                    isDraw ?
+                      "Match nul !" :
+                      playerTurn === user.id ?
+                        "C'est à vous !" :
+                        `Au tour de ${user.id === party.user1Id ? party.user2?.userName : party.user1?.userName}`
               }</Text>
               <Grid
                 templateColumns="repeat(3, 100px)"
@@ -191,12 +212,13 @@ const MorpionOnline = ({party}) => {
           <ModalHeader>Partie terminée</ModalHeader>
           <ModalBody>
             <Text>{winner === user.id ? (
-              "Vous avez gagné !"
+              "Félicitations ! Vous avez remporté la partie !"
             ) : winner !== null ? (
               `Le gagnant est ${winner === party.user1Id ? party.user1?.userName : party.user2?.userName}`
-            ) : (
-              `La partie est terminée`
+            ) :  (
+              `Match nul !`
             )}</Text>
+            <Text>Vous allez être redirigé vers le Gameboard dans 10 secondes</Text>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme={'red'} onClick={handleConfirmQuit} mr={4}>

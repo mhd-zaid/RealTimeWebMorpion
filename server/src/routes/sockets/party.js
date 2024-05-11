@@ -58,7 +58,8 @@ export default (io, db) => {
             { user1Id: socket.userId },
             { user2Id: socket.userId },
           ],
-        }
+        },
+        order: [['createdAt', 'DESC']]
       });
 
       const broadcastPartiesInProgress = async () => {
