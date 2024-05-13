@@ -20,20 +20,21 @@ import {
   Center,
   useToast,
   position,
-  Container
-} from "@chakra-ui/react";
-import * as code from "zod";
-import {useContext, useEffect, useState} from "react";
-import {z} from "zod";
-import MorpionOnline from "@/components/morpion/MorpionOnline.jsx";
-import {useLocation, useNavigate} from "react-router-dom";
-import io from "socket.io-client";
-import {AuthContext} from "@/context/AuthContext.jsx";
+  Container,
+} from '@chakra-ui/react';
+import * as code from 'zod';
+import { useContext, useEffect, useState } from 'react';
+import { z } from 'zod';
+import MorpionOnline from '@/components/morpion/MorpionOnline.jsx';
+import { useLocation, useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
+import { AuthContext } from '@/context/AuthContext.jsx';
+import RoomChat from '../../components/room-chat';
 
 const PartyOnline = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const {user, token} = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const location = useLocation();
   const [party, setParty] = useState(() => {
     const savedParty = localStorage.getItem('currentParty');
@@ -52,25 +53,24 @@ const PartyOnline = () => {
       io(`${import.meta.env.VITE_SOCKET_URL}/parties`, {
         auth: { token: token },
       }),
-    )
+    );
   }, []);
 
   useEffect(() => {
     if (!partyOnlineSocket) return;
     partyOnlineSocket.on('connect', () => {
-
       partyOnlineSocket.emit('join', party.id);
 
       partyOnlineSocket.on('server:parties:start', party => {
-        if(user.id === party.data.user1Id) {
+        if (user.id === party.data.user1Id) {
           toast({
-            title: "La partie a commencé",
+            title: 'La partie a commencé',
             description: `${party.data.user2.userName} a rejoint la parti`,
-            position: "top-right",
-            status: "success",
+            position: 'top-right',
+            status: 'success',
             duration: 9000,
             isClosable: true,
-          })
+          });
         }
         setParty(party.data);
         localStorage.setItem('currentParty', JSON.stringify(party.data));
@@ -87,13 +87,21 @@ const PartyOnline = () => {
     <Flex
       align="center"
       justify="center"
-      h={"full"}
+      h={'full'}
       bg={'gray.900'}
-      color={"white"}
+      color={'white'}
     >
+      <Container pos={'absolute'} left={0} maxW={'30%'} h={'80%'}>
+        <RoomChat partyId={party.id} />
+      </Container>
       <VStack>
         <MorpionOnline party={party} />
-        {party.code && (<Text fontSize="xl" fontWeight="bold" m={4}> Code  : {party.code} </Text>)}
+        {party.code && (
+          <Text fontSize="xl" fontWeight="bold" m={4}>
+            {' '}
+            Code : {party.code}{' '}
+          </Text>
+        )}
       </VStack>
     </Flex>
   );

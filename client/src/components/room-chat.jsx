@@ -82,18 +82,21 @@ const RoomChat = ({ isGeneral, partyId }) => {
 
   return (
     <Box w="full" h="full" position="relative">
-      <Text
-        pos="absolute"
-        top={2}
-        left={0}
-        right={0}
-        zIndex={10}
-        fontWeight={'bold'}
-        textTransform="uppercase"
-        textAlign="center"
-      >
-        Chat général
-      </Text>
+      {isGeneral && (
+        <Text
+          pos="absolute"
+          top={2}
+          left={0}
+          right={0}
+          zIndex={10}
+          fontWeight={'bold'}
+          textTransform="uppercase"
+          textAlign="center"
+        >
+          Chat général
+        </Text>
+      )}
+
       <MainContainer style={{ borderRadius: '.6em' }}>
         <ChatContainer style={{ paddingTop: '2rem' }}>
           <MessageList>
