@@ -1,31 +1,35 @@
-import {createContext, useEffect, useState} from 'react';
-import {useToast} from "@chakra-ui/react";
-import {useNavigate} from "react-router-dom";
-import {jwtDecode} from 'jwt-decode';
-import {apiService} from "@/services/apiService.js";
+import { createContext, useEffect, useState } from 'react';
+import { useToast } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import { apiService } from '@/services/apiService.js';
 
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({});
+  const isAdmin = user.role === 'admin';
   const navigate = useNavigate();
   const toast = useToast();
 
   const checkUserStatus = async () => {
-    if(window.location.pathname.startsWith('/auth')) return;
+    if (window.location.pathname.startsWith('/auth')) return;
     try {
       const response = await apiService.getUserStatus();
       if (response.success) {
         setUser(response.data);
       } else {
         setUser({});
-        document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        navigate('/auth/login')
+        document.cookie =
+          'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        navigate('/auth/login');
       }
     } catch (error) {
       setUser({});
-      console.error('Erreur lors de la récupération des informations : ', error);
+      console.error(
+        'Erreur lors de la récupération des informations : ',
+        error,
+      );
     }
-
 
     // const token = document.cookie.split('; ').find(row => row.startsWith('auth_token='));
     // if(token){
@@ -41,26 +45,28 @@ export const AuthProvider = ({ children }) => {
     // }else{
     //   setUser(null);
     // }
-
   };
 
   useEffect(() => {
-    checkUserStatus()
+    checkUserStatus();
   }, []);
 
   useEffect(() => {
-    checkUserStatus()
+    checkUserStatus();
   }, [navigate]);
 
-  const login = async (credentials) => {
+  const login = async credentials => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/login`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(credentials),
         },
-        body: JSON.stringify(credentials),
-      });
+      );
 
       const result = await response.json();
 
@@ -75,16 +81,19 @@ export const AuthProvider = ({ children }) => {
           duration: 5000,
           isClosable: true,
         });
-        localStorage.removeItem('currentParty')
+        localStorage.removeItem('currentParty');
       } else {
-        console.error('Erreur lors de la tentative de connexion :', result.message);
+        console.error(
+          'Erreur lors de la tentative de connexion :',
+          result.message,
+        );
         toast({
           title: 'Erreur lors de la connexion',
           description: result.message,
           status: 'error',
           duration: 5000,
           isClosable: true,
-        })
+        });
       }
     } catch (error) {
       console.error('Erreur lors de la tentative de connexion :', error);
@@ -93,32 +102,34 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser({});
-    navigate('/auth/login')
-    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    localStorage.removeItem('currentParty')
+    navigate('/auth/login');
+    document.cookie =
+      'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    localStorage.removeItem('currentParty');
   };
 
   const getToken = () => {
-    const tokenFromCookie = document.cookie.split('; ').find(row => row.startsWith('auth_token='));
-    if(tokenFromCookie){
+    const tokenFromCookie = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('auth_token='));
+    if (tokenFromCookie) {
       return tokenFromCookie.split('=')[1];
     }
     return null;
-  }
+  };
 
   const token = getToken();
 
   const contextValue = {
+    isAdmin,
     user,
     login,
     logout,
     checkUserStatus,
-    token
+    token,
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };

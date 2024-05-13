@@ -3,50 +3,72 @@ import {
   Button,
   Center,
   Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
   Table,
   TableContainer,
   Tbody,
   Td,
-  Text, Tfoot,
+  Text,
+  Tfoot,
   Th,
   Thead,
-  Tr, useColorMode,
-  VStack
-} from "@chakra-ui/react";
-import {useContext, useEffect, useState} from "react";
-import io from "socket.io-client";
-import {AuthContext} from "@/context/AuthContext.jsx";
-import moment from "moment/moment.js";
+  Tr,
+  useColorMode,
+  VStack,
+} from '@chakra-ui/react';
+import { useContext, useEffect, useState } from 'react';
+import io from 'socket.io-client';
+import { AuthContext } from '@/context/AuthContext.jsx';
+import moment from 'moment/moment.js';
 import 'moment/locale/fr';
-import {useNavigate} from "react-router-dom";
-import Pagination from "@/components/Pagination.jsx";
+import { useNavigate } from 'react-router-dom';
+import Pagination from '@/components/Pagination.jsx';
 
 const ProfilePage = () => {
   const { colorMode } = useColorMode();
-  const { token, user } = useContext(AuthContext);
+  const { token, user, isAdmin } = useContext(AuthContext);
   const [partySocket, setPartySocket] = useState();
+  const [notifSocket, setNotifSocket] = useState();
   const [gameHistory, setGameHistory] = useState([]);
   const [games, setGames] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [nbParties, setNbParties] = useState(0);
-  const navigate  = useNavigate();
+  const [notifMessage, setNotifMessage] = useState('');
+
+  const navigate = useNavigate();
   moment.locale('fr');
 
   // Connexion au namespace parties
   useEffect(() => {
-    if (!user) return;
+    if (!token) return;
     setPartySocket(
       io(`${import.meta.env.VITE_SOCKET_URL}/parties`, {
         auth: { token: token },
       }),
-    )
-  }, []);
+    );
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    if (isAdmin) {
+      setNotifSocket(
+        io(`${import.meta.env.VITE_SOCKET_URL}/notifications`, {
+          auth: { token: token },
+        }),
+      );
+    }
+  }, [token, isAdmin]);
 
   // Récupération de l'historique des parties
   useEffect(() => {
     if (!partySocket) return;
     partySocket.on('connect', () => {
+      console.log('parties connected');
       partySocket.on('server:parties:list:user', parties => {
         const games = parties.data.map(game => ({
           ...game,
@@ -54,48 +76,142 @@ const ProfilePage = () => {
         }));
         setNbParties(parties.data.length);
         setGames(games);
-        setGameHistory(games.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+        setGameHistory(
+          games.slice(
+            (currentPage - 1) * itemsPerPage,
+            currentPage * itemsPerPage,
+          ),
+        );
       });
     });
+    return () => {
+      partySocket.disconnect();
+    };
   }, [partySocket]);
 
   useEffect(() => {
-    setGameHistory(games.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+    if (!notifSocket) return;
+    notifSocket.on('connect', () => {
+      console.log('notif connected');
+    });
+
+    return () => {
+      notifSocket.disconnect();
+    };
+  }, [notifSocket]);
+
+  useEffect(() => {
+    setGameHistory(
+      games.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage),
+    );
   }, [currentPage]);
+
+  const handleNotifSend = () => {
+    if (notifMessage === '') return;
+    if (
+      confirm(
+        "Confirmer l'envoi de la notification à tout le monde ? (message : " +
+          notifMessage +
+          ')',
+      )
+    ) {
+      notifSocket.emit('send:notification', notifMessage);
+      setNotifMessage('');
+    }
+  };
 
   return (
     <>
-      <Flex
-        align="center"
-        justify="center"
-        h={"full"}
-        bg={'gray.900'}
-      >
+      <Flex align="center" justify="center" bg={'gray.900'}>
         <VStack>
-          <Text fontSize="xl" fontWeight="bold" m={4} color={colorMode === 'light' ? 'white' : 'gray.800'}> Bienvenue {user.userName} ! </Text>
+          <Text
+            fontSize="xl"
+            fontWeight="bold"
+            m={4}
+            color={colorMode === 'light' ? 'white' : 'gray.800'}
+          >
+            {' '}
+            Bienvenue {user.userName} !{' '}
+          </Text>
 
           {gameHistory.length === 0 && (
             <Center>
               <Box w="50%">
-                <Flex direction="column" >
-                  <Text fontSize="xl" fontWeight="bold" m={4} color={colorMode === 'light' ? 'white' : 'gray.800'}> Historique des matchs </Text>
-                  <Text fontSize="md" m={4} color={colorMode === 'light' ? 'white' : 'gray.800'}> On dirait que vous n'avez joué à aucun jeu avec nous. Pourquoi ne pas commencer maintenant ? Défiez un ami ou trouvez un adversaire et amusez-vous ! Votre première victoire vous attend ! </Text>
-                  <Text fontSize="md" m={4} color={colorMode === 'light' ? 'white' : 'gray.800'}> À vos marques, prêts, jouez ! 🎮 </Text>
+                <Flex direction="column">
+                  <Text
+                    fontSize="xl"
+                    fontWeight="bold"
+                    m={4}
+                    color={colorMode === 'light' ? 'white' : 'gray.800'}
+                  >
+                    {' '}
+                    Historique des matchs{' '}
+                  </Text>
+                  <Text
+                    fontSize="md"
+                    m={4}
+                    color={colorMode === 'light' ? 'white' : 'gray.800'}
+                  >
+                    {' '}
+                    On dirait que vous n'avez joué à aucun jeu avec nous.
+                    Pourquoi ne pas commencer maintenant ? Défiez un ami ou
+                    trouvez un adversaire et amusez-vous ! Votre première
+                    victoire vous attend !{' '}
+                  </Text>
+                  <Text
+                    fontSize="md"
+                    m={4}
+                    color={colorMode === 'light' ? 'white' : 'gray.800'}
+                  >
+                    {' '}
+                    À vos marques, prêts, jouez ! 🎮{' '}
+                  </Text>
                 </Flex>
               </Box>
             </Center>
-          ) }
+          )}
 
-            <Flex direction="column" align="center" w={"full"}>
-              <Button colorScheme="teal" variant="solid"  w={"2xl"} m={4} onClick={() => navigate("/")}>
-                Go to game board
-              </Button>
-            </Flex>
+          <Flex direction="column" align="center" w={'full'}>
+            {isAdmin && (
+              <Box bgColor="red.200" w={'full'} p={2} rounded={'lg'}>
+                <Heading size="md">Administration</Heading>
+
+                <FormControl mt={4}>
+                  <FormLabel>
+                    Envoyer une notification à tout le monde
+                  </FormLabel>
+                  <Flex>
+                    <Input
+                      mr={4}
+                      bgColor="white"
+                      placeholder="Votre message"
+                      value={notifMessage}
+                      onChange={e => setNotifMessage(e.target.value)}
+                    />
+                    <Button onClick={handleNotifSend}>Envoyer</Button>
+                  </Flex>
+                </FormControl>
+              </Box>
+            )}
+            <Button
+              colorScheme="teal"
+              variant="solid"
+              w={'full'}
+              m={4}
+              onClick={() => navigate('/')}
+            >
+              Go to game board
+            </Button>
+          </Flex>
 
           {gameHistory.length > 0 && (
             <Center>
               <TableContainer borderRadius={10}>
-                <Table variant="simple" size="lg" bg={colorMode === 'light' ? 'white' : 'gray.800'}>
+                <Table
+                  variant="simple"
+                  size="lg"
+                  bg={colorMode === 'light' ? 'white' : 'gray.800'}
+                >
                   <Thead>
                     <Tr>
                       <Th>Joueurs</Th>
@@ -130,18 +246,19 @@ const ProfilePage = () => {
                       </Tr>
                     ))}
                   </Tbody>
-                  <Tfoot>
-                    <Pagination
-                      totalPages={Math.ceil(nbParties / itemsPerPage)}
-                      currentPage={currentPage}
-                      onPageChange={(newPage) => {
-                        if (newPage >= 1 && newPage <= Math.ceil(nbParties / itemsPerPage)) {
-                          setCurrentPage(newPage);
-                        }
-                      }}
-                    />
-                  </Tfoot>
                 </Table>
+                <Pagination
+                  totalPages={Math.ceil(nbParties / itemsPerPage)}
+                  currentPage={currentPage}
+                  onPageChange={newPage => {
+                    if (
+                      newPage >= 1 &&
+                      newPage <= Math.ceil(nbParties / itemsPerPage)
+                    ) {
+                      setCurrentPage(newPage);
+                    }
+                  }}
+                />
               </TableContainer>
             </Center>
           )}
@@ -190,7 +307,7 @@ const ProfilePage = () => {
         </VStack>
       </Flex>
     </>
-  )
+  );
 };
 
 export default ProfilePage;

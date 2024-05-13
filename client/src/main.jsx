@@ -17,6 +17,7 @@ import EmailVerifiedPage from './pages/auth/EmailVerifiedPage.jsx';
 import PartyOnlinePage from '@/pages/party/PartyOnlinePage.jsx';
 import PartyLocalPage from '@/pages/party/PartyLocalPage.jsx';
 import PartiesPage from '@/pages/party/PartiesPage.jsx';
+import { AuthProvider } from './context/AuthContext';
 
 const theme = extendTheme(extend_theme);
 
@@ -24,32 +25,32 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route element={<ProtectedRoute />}>
-              <Route index element={<Home />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="general" element={<PartiesPage />} />
-              <Route path="room" element={<PartyLocalPage />} />
-              <Route path="room/:id" element={<PartyOnlinePage />} />
-            </Route>
-          </Route>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<App />}>
+              <Route element={<ProtectedRoute />}>
+                <Route index element={<Home />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="general" element={<PartiesPage />} />
+                <Route path="room" element={<PartyLocalPage />} />
+                <Route path="room/:id" element={<PartyOnlinePage />} />
+              </Route>
 
-          <Route path="/" element={<App />}>
-            <Route path="auth">
-              <Route path="login" element={<LoginPage />} />
-              <Route path="register" element={<RegisterPage />} />
-              <Route path="forgetpassword" element={<ForgetPasswordPage />} />
-              <Route
-                path="resetpassword/:token"
-                element={<ResetPasswordPage />}
-              />
-              <Route path="verify" element={<EmailVerifiedPage />} />
-            </Route>
+              <Route path="auth">
+                <Route path="login" element={<LoginPage />} />
+                <Route path="register" element={<RegisterPage />} />
+                <Route path="forgetpassword" element={<ForgetPasswordPage />} />
+                <Route
+                  path="resetpassword/:token"
+                  element={<ResetPasswordPage />}
+                />
+                <Route path="verify" element={<EmailVerifiedPage />} />
+              </Route>
 
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </ChakraProvider>
   </React.StrictMode>,

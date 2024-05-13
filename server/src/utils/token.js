@@ -1,9 +1,9 @@
-import jwt from "jsonwebtoken"
+import jwt from 'jsonwebtoken';
 
 export default () => ({
-  createToken: (user) => {
+  createToken: user => {
     if (!user) {
-      throw new Error("Utilisateur non défini");
+      throw new Error('Utilisateur non défini');
     }
 
     return jwt.sign(
@@ -15,21 +15,21 @@ export default () => ({
       },
       process.env.JWT_SECRET_KEY,
       {
-        expiresIn: "1h",
-      }
+        expiresIn: '5h',
+      },
     );
   },
 
-  verifyToken: (token) => {
+  verifyToken: token => {
     if (!token) {
-      throw new Error("Token non défini ou vide");
+      throw new Error('Token non défini ou vide');
     }
 
     try {
       return jwt.verify(token, process.env.JWT_SECRET_KEY);
     } catch (error) {
-      console.error("Échec de la vérification du token:", error);
+      console.error('Échec de la vérification du token:', error);
       return null;
     }
-  }
-})
+  },
+});
