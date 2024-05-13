@@ -14,10 +14,9 @@ import RegisterPage from './pages/auth/RegisterPage';
 import ForgetPasswordPage from './pages/auth/ForgetPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import EmailVerifiedPage from './pages/auth/EmailVerifiedPage.jsx';
-import GameBoardPage from "@/pages/GameBoardPage.jsx";
-import PartyOnlinePage from "@/pages/party/PartyOnlinePage.jsx";
-import PartyLocalPage from "@/pages/party/PartyLocalPage.jsx";
-import PartiesPage from "@/pages/party/PartiesPage.jsx";
+import PartyOnlinePage from '@/pages/party/PartyOnlinePage.jsx';
+import PartyLocalPage from '@/pages/party/PartyLocalPage.jsx';
+import PartiesPage from '@/pages/party/PartiesPage.jsx';
 
 const theme = extendTheme(extend_theme);
 
@@ -26,16 +25,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ChakraProvider theme={theme}>
       <BrowserRouter>
         <Routes>
-
           <Route path="/" element={<App />}>
             <Route element={<ProtectedRoute />}>
-              <Route index element={<GameBoardPage />} />
+              <Route index element={<Home />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route index element={<GameBoardPage />} />
               <Route path="general" element={<PartiesPage />} />
               <Route path="room" element={<PartyLocalPage />} />
               <Route path="room/:id" element={<PartyOnlinePage />} />
-              <Route path={"chat"} element={<Home />} />
             </Route>
           </Route>
 
@@ -44,7 +40,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="login" element={<LoginPage />} />
               <Route path="register" element={<RegisterPage />} />
               <Route path="forgetpassword" element={<ForgetPasswordPage />} />
-              <Route path="resetpassword/:token" element={<ResetPasswordPage />} />
+              <Route
+                path="resetpassword/:token"
+                element={<ResetPasswordPage />}
+              />
               <Route path="verify" element={<EmailVerifiedPage />} />
             </Route>
 
