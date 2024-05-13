@@ -5,7 +5,6 @@ import {
   MessageList,
   Message,
   MessageInput,
-  MessageSeparator,
 } from '@chatscope/chat-ui-kit-react';
 import { useContext, useEffect, useState } from 'react';
 import { Box, Text, useToast } from '@chakra-ui/react';
@@ -15,7 +14,7 @@ import { AuthContext } from '@/context/AuthContext.jsx';
 
 const RoomChat = ({ isGeneral, partyId }) => {
   const toast = useToast();
-  const { token } = useContext(AuthContext);
+  const { token, user } = useContext(AuthContext);
   const [messageSocket, setMessageSocket] = useState();
   const [chatMessages, setChatMessages] = useState([]);
   useEffect(() => {
@@ -43,7 +42,7 @@ const RoomChat = ({ isGeneral, partyId }) => {
             message: message.content,
             sender: message.user.userName,
             senderId: message.userId,
-            direction: 'incoming', // check if message.userId === currentUserId
+            direction: 'incoming',
             sentTime: message.createdAt,
           })),
         );
@@ -98,30 +97,33 @@ const RoomChat = ({ isGeneral, partyId }) => {
       <MainContainer style={{ borderRadius: '.6em' }}>
         <ChatContainer style={{ paddingTop: '2rem' }}>
           <MessageList>
-            {/* <MessageSeparator>
-              <Text fontWeight={'bold'}>dani</Text>&nbsp; s&apos;est connecté
-            </MessageSeparator> */}
-            {chatMessages.map((message, i) => {
-              return (
-                <Message key={i} model={message}>
-                  <Message.Header>{message.sender}</Message.Header>
-                  <Box
-                    as={Message.CustomContent}
-                    p={2}
-                    rounded={'lg'}
-                    bgColor={stringToColor(message.senderId)}
-                  >
-                    {message.message}
-                  </Box>
-                  <Message.Footer>
-                    {new Date(message.sentTime).toLocaleDateString()}&nbsp;
-                    {new Date(message.sentTime)
-                      .toLocaleTimeString()
-                      .slice(0, 5)}
-                  </Message.Footer>
-                </Message>
-              );
-            })}
+            {chatMessages
+              .map(msg =>
+                msg.senderId === user.id
+                  ? { ...msg, direction: 'outgoing' }
+                  : msg,
+              )
+              .map((message, i) => {
+                return (
+                  <Message key={i} model={message}>
+                    <Message.Header>{message.sender}</Message.Header>
+                    <Box
+                      as={Message.CustomContent}
+                      p={2}
+                      rounded={'lg'}
+                      bgColor={stringToColor(message.sender)}
+                    >
+                      {message.message}
+                    </Box>
+                    <Message.Footer>
+                      {new Date(message.sentTime).toLocaleDateString()}&nbsp;
+                      {new Date(message.sentTime)
+                        .toLocaleTimeString()
+                        .slice(0, 5)}
+                    </Message.Footer>
+                  </Message>
+                );
+              })}
           </MessageList>
           <MessageInput
             attachButton={false}
