@@ -4,7 +4,6 @@ export default (io, db) => {
   io.of('/messages')
     .use(async (socket, next) => {
       const checkUser = await checkAuthSocket(socket, db);
-      console.log('CHECK USER');
       if (checkUser === false) {
         return next(new Error('Vous devez être connecté'));
       }
