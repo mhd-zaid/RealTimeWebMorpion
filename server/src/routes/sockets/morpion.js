@@ -20,6 +20,15 @@ export default (io,db) => {
         socket.emit("server:morpion:state", {status: "success", data: {mooves, lastMoveUserId: lastMoveUserId?.moveUserId }});
       })
 
+      socket.on('client:parties:morpion:cancel:party', async () => {
+        await db.Party.destroy({
+          where: {
+            user1Id: socket.userId,
+            status: "searchPlayer"
+          }
+        });
+      });
+
       socket.on("client:morpion:mooveplay:create", async (data, callback) => {
         try {
           const { partyId, numerousLine, numerousColumn, symbol } = data;

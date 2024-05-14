@@ -56,9 +56,11 @@ const MorpionOnline = ({party}) => {
   }, [winner, isDraw]);
 
   const handleConfirmQuit = (isCancelling = false) => {
-    if(isCancelling) morpionSocket.emit('client:parties:cancel:party');
-    localStorage.removeItem('currentParty');
-    navigate('/');
+    if(isCancelling && morpionSocket){
+      morpionSocket.emit('client:parties:morpion:cancel:party');
+      localStorage.removeItem('currentParty');
+      navigate('/');
+    } 
   };
 
   useEffect(() => {
@@ -179,11 +181,11 @@ const MorpionOnline = ({party}) => {
                 )}
               </Grid>
 
+            </>
+          )}
               <Button mt={10}  colorScheme={"transparent"} onClick={() => quitGame()}>
                 Quitter la partie
               </Button>
-            </>
-          )}
         </Flex>
       </Center>
 
@@ -196,7 +198,9 @@ const MorpionOnline = ({party}) => {
             <Text>Si vous quittez, vous perdrez le progrès de la partie en cours.</Text>
           </ModalBody>
           <ModalFooter>
-            <Button bg={"transparent"}  onClick={handleConfirmQuit(true)} mr={4}>
+            <Button bg={"transparent"}  onClick={()=> {
+              handleConfirmQuit(true)
+            }} mr={4}>
               Quitter
             </Button>
             <Button colorScheme="blue" onClick={quitGame} ml={3}>

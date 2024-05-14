@@ -104,15 +104,6 @@ export default (io, db) => {
         await broadcastPartiesInProgress();
       });
 
-      socket.on('client:parties:cancel:party', async () => {
-        await db.Party.destroy({
-          where: {
-            user1Id: socket.userId,
-            status: "searchPlayer"
-          }
-        });
-      });
-
       socket.on('client:parties:create', async ({is_private}, callback) => {
         try {
           const id = uuidv7();
