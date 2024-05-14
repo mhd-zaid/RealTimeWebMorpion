@@ -220,11 +220,6 @@ const MorpionOnline = ({party}) => {
             )}</Text>
             <Text>Vous allez être redirigé vers le Gameboard dans 10 secondes</Text>
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme={'red'} onClick={handleConfirmQuit} mr={4}>
-              Quitter
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
 
