@@ -122,7 +122,7 @@ const ProfilePage = () => {
 
   return (
     <>
-      <Flex align="center" justify="center" bg={'gray.900'}>
+      <Flex h={"full"} align="center" justify="center" bg={'gray.900'}>
         <VStack>
           <Text
             fontSize="xl"
@@ -231,7 +231,7 @@ const ProfilePage = () => {
                         </Td>
                         <Td>
                           <Flex direction="column" align="center">
-                            {game.winnerId == user.id ? 'Gagné' : 'Perdu'}
+                            {game.winnerId === null ? "Match Nul" : game.winnerId === user.id ? 'Gagné' : 'Perdu'}
                           </Flex>
                         </Td>
                         <Td>

@@ -147,7 +147,7 @@ const MorpionOnline = ({party}) => {
           {party.status === 'searchPlayer' ? (
             <>
               <VStack>
-                <Text fontSize="2xl" mb="20px">En attente d'un joueur...</Text>
+                <Text fontSize="2xl" mb="20px" color={"white"}>En attente d'un joueur...</Text>
                 <Img src="/img/tic-tac-toe.gif" w={80}/>
               </VStack>
             </>

@@ -20,7 +20,7 @@ import {
   Center,
   useToast,
   position,
-  Container,
+  Container, Box,
 } from '@chakra-ui/react';
 import * as code from 'zod';
 import { useContext, useEffect, useState } from 'react';
@@ -42,6 +42,7 @@ const PartyOnline = () => {
     return savedParty ? JSON.parse(savedParty) : locationParty || null;
   });
   const [partyOnlineSocket, setPartyOnlineSocket] = useState();
+  const [displayChat, setDisplayChat] = useState(false);
 
   useEffect(() => {
     if (!party) {
@@ -72,6 +73,7 @@ const PartyOnline = () => {
             isClosable: true,
           });
         }
+        setDisplayChat(true);
         setParty(party.data);
         localStorage.setItem('currentParty', JSON.stringify(party.data));
       });
@@ -83,26 +85,27 @@ const PartyOnline = () => {
     return;
   }
 
+  console.log("party", party.id);
+
   return (
-    <Flex
-      align="center"
-      justify="center"
-      h={'full'}
-      bg={'gray.900'}
-      color={'white'}
-    >
-      <Container pos={'absolute'} left={0} maxW={'30%'} h={'80%'}>
-        <RoomChat partyId={party.id} />
-      </Container>
-      <VStack>
+    <Flex h={'full'} bg={'gray.900'} py={10}>
+      <Flex
+        direction={'column'}
+        alignItems={"center"}
+        w={"50%"}
+      >
         <MorpionOnline party={party} />
         {party.code && (
-          <Text fontSize="xl" fontWeight="bold" m={4}>
-            {' '}
-            Code : {party.code}{' '}
+          <Text fontSize="xl" fontWeight="bold" m={4} color={"white"}>
+            Code : {party.code}
           </Text>
         )}
-      </VStack>
+      </Flex>
+      {party.user1 && party.user2 && (
+        <Box w={"30%"} px={10}>
+          <RoomChat partyId={party.id} />
+        </Box>
+      )}
     </Flex>
   );
 };
