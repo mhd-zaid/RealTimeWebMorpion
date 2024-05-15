@@ -123,7 +123,7 @@ const ProfilePage = () => {
   return (
     <>
       <Flex align="center" justify="center" bg={'gray.900'}>
-        <VStack>
+        <Flex flexDir="column" w={'50%'}>
           <Text
             fontSize="xl"
             fontWeight="bold"
@@ -136,42 +136,40 @@ const ProfilePage = () => {
 
           {gameHistory.length === 0 && (
             <Center>
-              <Box w="50%">
-                <Flex direction="column">
-                  <Text
-                    fontSize="xl"
-                    fontWeight="bold"
-                    m={4}
-                    color={colorMode === 'light' ? 'white' : 'gray.800'}
-                  >
-                    {' '}
-                    Historique des matchs{' '}
-                  </Text>
-                  <Text
-                    fontSize="md"
-                    m={4}
-                    color={colorMode === 'light' ? 'white' : 'gray.800'}
-                  >
-                    {' '}
-                    On dirait que vous n'avez joué à aucun jeu avec nous.
-                    Pourquoi ne pas commencer maintenant ? Défiez un ami ou
-                    trouvez un adversaire et amusez-vous ! Votre première
-                    victoire vous attend !{' '}
-                  </Text>
-                  <Text
-                    fontSize="md"
-                    m={4}
-                    color={colorMode === 'light' ? 'white' : 'gray.800'}
-                  >
-                    {' '}
-                    À vos marques, prêts, jouez ! 🎮{' '}
-                  </Text>
-                </Flex>
-              </Box>
+              <Flex direction="column">
+                <Text
+                  fontSize="xl"
+                  fontWeight="bold"
+                  m={4}
+                  color={colorMode === 'light' ? 'white' : 'gray.800'}
+                >
+                  {' '}
+                  Historique des matchs{' '}
+                </Text>
+                <Text
+                  fontSize="md"
+                  m={4}
+                  color={colorMode === 'light' ? 'white' : 'gray.800'}
+                >
+                  {' '}
+                  On dirait que vous n'avez joué à aucun jeu avec nous. Pourquoi
+                  ne pas commencer maintenant ? Défiez un ami ou trouvez un
+                  adversaire et amusez-vous ! Votre première victoire vous
+                  attend !{' '}
+                </Text>
+                <Text
+                  fontSize="md"
+                  m={4}
+                  color={colorMode === 'light' ? 'white' : 'gray.800'}
+                >
+                  {' '}
+                  À vos marques, prêts, jouez ! 🎮{' '}
+                </Text>
+              </Flex>
             </Center>
           )}
 
-          <Flex direction="column" align="center" w={'full'}>
+          <Flex direction="column" align="center">
             {isAdmin && (
               <Box bgColor="red.200" w={'full'} p={2} rounded={'lg'}>
                 <Heading size="md">Administration</Heading>
@@ -304,7 +302,7 @@ const ProfilePage = () => {
           {/*  </TableContainer>*/}
           {/*</Center>*/}
           {/*)}*/}
-        </VStack>
+        </Flex>
       </Flex>
     </>
   );
