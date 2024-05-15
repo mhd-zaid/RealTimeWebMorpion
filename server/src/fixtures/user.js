@@ -39,7 +39,7 @@ const usersFixture = [
     userName: 'MakanKamissoko',
     email: 'mak@mail.fr',
     password: 'MotDePasse123!',
-    role: 'user',
+    role: 'admin',
     isVerified: true,
     loginAttempts: 0,
     token: 'exampleToken7',
