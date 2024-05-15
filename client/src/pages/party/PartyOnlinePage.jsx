@@ -85,8 +85,6 @@ const PartyOnline = () => {
     return;
   }
 
-  console.log("party", party.id);
-
   return (
     <Flex h={'full'} bg={'gray.900'} py={10}>
       <Flex

@@ -30,7 +30,7 @@ export default (io, db) => {
       if (!checkUser) {
         return next(new Error("Vous devez être connecté"));
       }
-      socket.userId = checkUser.id;
+      socket.user = checkUser;
       next();
     })
     .on("connection", async(socket) => {
@@ -55,8 +55,8 @@ export default (io, db) => {
         where: {
           status: "finished",
           [Op.or]: [
-            { user1Id: socket.userId },
-            { user2Id: socket.userId },
+            { user1Id: socket.user.id },
+            { user2Id: socket.user.id },
           ],
         },
         order: [['createdAt', 'DESC']]
@@ -128,7 +128,7 @@ export default (io, db) => {
 
           const symbolUser1 = Math.random() < 0.5 ? 'X' : 'O';
           const symbolUser2 = symbolUser1 === 'X' ? 'O' : 'X';
-          const party = await db.Party.create({ id, user1Id: socket.userId, code, symbolUser1, symbolUser2, is_private });
+          const party = await db.Party.create({ id, user1Id: socket.user.id, code, symbolUser1, symbolUser2, is_private });
           await broadcastPartiesInProgress()
           callback({ status: "success", data: party });
         } catch (error) {
@@ -183,7 +183,7 @@ export default (io, db) => {
           if (!party) {
             throw new Error('La partie n\'existe pas.');
           }
-          if (party.user1Id === socket.userId) {
+          if (party.user1Id === socket.user.id) {
             throw new Error('Vous ne pouvez pas rejoindre votre propre partie.');
           }
           if (party.is_private && party.code !== data.code) {
@@ -194,7 +194,7 @@ export default (io, db) => {
           }
 
           const partyJoined = await db.Party.update({
-            user2Id: socket.userId,
+            user2Id: socket.user.id,
             status: "in progress",
           }, {
             where: {

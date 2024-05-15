@@ -58,9 +58,9 @@ const MorpionOnline = ({party}) => {
   const handleConfirmQuit = (isCancelling = false) => {
     if(isCancelling && morpionSocket){
       morpionSocket.emit('client:parties:morpion:cancel:party');
+    }
       localStorage.removeItem('currentParty');
       navigate('/');
-    } 
   };
 
   useEffect(() => {
@@ -153,7 +153,7 @@ const MorpionOnline = ({party}) => {
             </>
           ) : (
             <>
-              <Text fontSize="2xl" mb="20px">{
+              <Text fontSize="2xl" mb="20px" color={"white"}>{
                 winner === user.id ?
                   "Vous avez gagné !" :
                   winner !== null ?

@@ -8,7 +8,8 @@ export default (io,db) => {
       if(checkUser === false) {
         return next(new Error("Vous devez être connecté"));
       }
-      socket.userId = checkUser.id;
+
+      socket.user = checkUser;
       next();
     }).on("connection",socket => {
 
@@ -23,7 +24,7 @@ export default (io,db) => {
       socket.on('client:parties:morpion:cancel:party', async () => {
         await db.Party.destroy({
           where: {
-            user1Id: socket.userId,
+            user1Id: socket.user.id,
             status: "searchPlayer"
           }
         });
@@ -33,9 +34,9 @@ export default (io,db) => {
         try {
           const { partyId, numerousLine, numerousColumn, symbol } = data;
           const morpionService = new MorpionService(db);
-          const moovePlayed =  await morpionService.playMove(partyId, socket.userId, numerousLine, numerousColumn, symbol);
+          const moovePlayed =  await morpionService.playMove(partyId, socket.user.id, numerousLine, numerousColumn, symbol);
           const mooves = await db.MoovePlay.findAll({ where: { partyId: partyId } });
-          socket.to(partyId).emit("server:morpion:state", {status: "success", data: {mooves, lastMoveUserId: socket.userId, moovePlayed}});
+          socket.to(partyId).emit("server:morpion:state", {status: "success", data: {mooves, lastMoveUserId: socket.user.id, moovePlayed}});
           callback({ status: "success", data: moovePlayed });
         } catch (error) {
           callback({ status: "error", message: error.message });
