@@ -8,9 +8,9 @@ const HomePage = () => {
   const { user } = useContext(AuthContext);
 
   return (
-    <Flex>
+    <Flex h={'full'} bg={'gray.900'} py={10}>
       <GameBoardPage />
-      <Container>{user && <RoomChat isGeneral />}</Container>
+      <Container px={0}>{user && <RoomChat isGeneral />}</Container>
     </Flex>
   );
 };
