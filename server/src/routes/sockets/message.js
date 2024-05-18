@@ -11,7 +11,12 @@ export default (io, db) => {
       next();
     })
     .on('connection', async socket => {
-      socket.on('join', room => {
+      socket.on('join', async room => {
+        await db.Message.create({
+          content: `${socket.user.userName} vient de se connecter`,
+          userId: null,
+          partyId: null,
+        });
         socket.join(room);
         socket
           .to(room)
@@ -20,7 +25,12 @@ export default (io, db) => {
       });
 
       socket.on('disconnecting', () => {
-        socket.rooms.forEach(room => {
+        socket.rooms.forEach(async room => {
+          await db.Message.create({
+            content: `${socket.user.userName} vient de se déconnecter`,
+            userId: null,
+            partyId: null,
+          });
           socket
             .to(room)
             .emit(
