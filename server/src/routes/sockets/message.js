@@ -15,7 +15,10 @@ export default (io, db) => {
         await db.Message.create({
           content: `${socket.user.userName} vient de se connecter`,
           userId: null,
-          partyId: null,
+          partyId:
+            socket.handshake.query.partyId === 'general'
+              ? null
+              : socket.handshake.query.partyId,
         });
         socket.join(room);
         socket
@@ -24,13 +27,16 @@ export default (io, db) => {
         broadcastMessages(room);
       });
 
-      socket.on('disconnecting', () => {
-        socket.rooms.forEach(async room => {
-          await db.Message.create({
-            content: `${socket.user.userName} vient de se déconnecter`,
-            userId: null,
-            partyId: null,
-          });
+      socket.on('disconnecting', async () => {
+        await db.Message.create({
+          content: `${socket.user.userName} vient de se déconnecter`,
+          userId: null,
+          partyId:
+            socket.handshake.query.partyId === 'general'
+              ? null
+              : socket.handshake.query.partyId,
+        });
+        socket.rooms.forEach(room => {
           socket
             .to(room)
             .emit(

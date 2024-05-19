@@ -5,6 +5,7 @@ import {
   MessageList,
   Message,
   MessageInput,
+  MessageSeparator,
 } from '@chatscope/chat-ui-kit-react';
 import { useContext, useEffect, useState } from 'react';
 import { Box, Button, Flex, Text, useToast } from '@chakra-ui/react';
@@ -24,6 +25,7 @@ const RoomChat = ({ isGeneral, partyId }) => {
     setMessageSocket(
       io(`${import.meta.env.VITE_SOCKET_URL}/messages`, {
         auth: { token },
+        query: { partyId: isGeneral ? 'general' : partyId },
       }),
     );
   }, [token]);
@@ -43,7 +45,7 @@ const RoomChat = ({ isGeneral, partyId }) => {
         setChatMessages(
           messages.data.map(message => ({
             message: message.content,
-            sender: message.user.userName,
+            sender: message.user && message.user.userName,
             senderId: message.userId,
             direction: 'incoming',
             sentTime: message.createdAt,
@@ -110,7 +112,9 @@ const RoomChat = ({ isGeneral, partyId }) => {
                   : msg,
               )
               .map((message, i) => {
-                return (
+                return message.sender === null ? (
+                  <MessageSeparator key={i}>{message.message}</MessageSeparator>
+                ) : (
                   <Message key={i} model={message}>
                     <Message.Header>{message.sender}</Message.Header>
                     <Box
