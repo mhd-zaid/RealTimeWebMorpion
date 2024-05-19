@@ -21,9 +21,6 @@ export default (io, db) => {
               : socket.handshake.query.partyId,
         });
         socket.join(room);
-        socket
-          .to(room)
-          .emit('user:join', `${socket.user.userName} vient de se connecter`);
         broadcastMessages(room);
       });
 
@@ -35,14 +32,6 @@ export default (io, db) => {
             socket.handshake.query.partyId === 'general'
               ? null
               : socket.handshake.query.partyId,
-        });
-        socket.rooms.forEach(room => {
-          socket
-            .to(room)
-            .emit(
-              'user:quit',
-              `${socket.user.userName} vient de se déconnecter`,
-            );
         });
       });
 

@@ -52,25 +52,6 @@ const RoomChat = ({ isGeneral, partyId }) => {
           })),
         );
       });
-
-      messageSocket.on('user:join', message => {
-        console.log(message);
-        toast({
-          title: message,
-          status: 'info',
-          position: 'bottom-right',
-          duration: 3000,
-        });
-      });
-      messageSocket.on('user:quit', message => {
-        console.log(message);
-        toast({
-          title: message,
-          status: 'warning',
-          position: 'bottom-right',
-          duration: 3000,
-        });
-      });
     });
 
     return () => {
