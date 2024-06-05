@@ -121,7 +121,6 @@ export default () => ({
       }
 
       const token = createToken(user);
-      // res.cookie('jwt', token, { httpOnly: true, signed: true });
       await user.update({token: token});
 
       return res.json({

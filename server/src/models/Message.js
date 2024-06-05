@@ -14,7 +14,6 @@ export default function (connection) {
       });
 
       Message.addHook('beforeCreate', async () => {
-        // récupérer tout les message de party null et userId null si supérieur à 50 supprimer les 25 plus vieux
         const messages = await db.Message.findAll({
           where: {
             partyId: null,

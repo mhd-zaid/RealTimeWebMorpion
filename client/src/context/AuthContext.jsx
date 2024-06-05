@@ -73,14 +73,7 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         document.cookie = `auth_token=${result.data.token} ; path=/`;
         setUser(result.data.token);
-        navigate('/');
-        toast({
-          title: 'Connexion réussie',
-          description: 'Vous êtes maintenant connecté',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
+        navigate('/profile');
         localStorage.removeItem('currentParty');
       } else {
         console.error(
