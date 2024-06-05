@@ -4,11 +4,7 @@ export const apiService = {
 
   getUserInfo(instance, id){
     const headers = new Headers({ "Content-Type": "application/json" });
-    const token = localStorage.getItem("token");
-    if (token) {
-      headers.append("Authorization", `Bearer ${token}`);
-    }
-    return fetch(`${API_URL_BASE}/${instance}/${id}`, { method: "GET", headers, credentials: 'include'  })
+    return fetch(`${API_URL_BASE}/${instance}${id}`, { method: "GET", headers, credentials: 'include'  })
       .then((response) => response.json());
   },
 

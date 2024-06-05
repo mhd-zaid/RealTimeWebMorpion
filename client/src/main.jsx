@@ -40,10 +40,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<RegisterPage />} />
                 <Route path="forgetpassword" element={<ForgetPasswordPage />} />
-                <Route
-                  path="resetpassword/:token"
-                  element={<ResetPasswordPage />}
-                />
+                <Route path="resetpassword/:token" element={<ResetPasswordPage />} />
                 <Route path="verify" element={<EmailVerifiedPage />} />
               </Route>
 

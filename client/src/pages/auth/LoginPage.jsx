@@ -46,7 +46,12 @@ const LoginPage = () => {
     }
 
     try {
-      await login(formData);
+      const response = await login(formData);
+      if (response.success) {
+        setErrors({});
+      } else {
+        setErrors({ global: response.message });
+      }
     } catch (error) {
       setErrors({ global: error.message });
     }
