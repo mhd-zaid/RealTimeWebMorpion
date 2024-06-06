@@ -39,7 +39,6 @@ const GameBoardPage = () => {
   const { user, token } = useContext(AuthContext);
   const [partySocket, setPartySocket] = useState();
 
-  // joinGame
   const singleDigitCodeSchema = z
     .string()
     .length(1, 'Le code doit contenir 1 chiffre')
@@ -88,7 +87,6 @@ const GameBoardPage = () => {
       }
     });
   };
-  // createPrivateGame
   const createPrivateGame = () => {
     partySocket.emit('client:parties:create', { is_private: true }, party => {
       if (party.status === 'success') {

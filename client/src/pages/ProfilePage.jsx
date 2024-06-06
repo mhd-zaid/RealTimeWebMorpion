@@ -42,7 +42,6 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   moment.locale('fr');
 
-  // Connexion au namespace parties
   useEffect(() => {
     if (!token) return;
     setPartySocket(
@@ -64,7 +63,6 @@ const ProfilePage = () => {
     }
   }, [token, isAdmin]);
 
-  // Récupération de l'historique des parties
   useEffect(() => {
     if (!partySocket) return;
     partySocket.on('connect', () => {

@@ -17,6 +17,7 @@ function App() {
         auth: { token: token },
       }),
     );
+    Notification.requestPermission();
   }, [token]);
 
   useEffect(() => {
@@ -25,11 +26,7 @@ function App() {
       console.log('global connected');
 
       globalSocket.on('notification', message => {
-        toast({
-          title: message,
-          duration: 9000,
-          isClosable: true,
-        });
+        notifyUser(message);
       });
     });
 
@@ -37,6 +34,36 @@ function App() {
       globalSocket.disconnect();
     };
   }, [globalSocket]);
+
+  const notifyUser = message => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      // web api notification
+      const notification = new Notification('Message général', {
+        body: message,
+      });
+      return;
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          const notification = new Notification('Message général', {
+            body: message,
+          });
+          return;
+        }
+        toast({
+          title: message,
+          duration: 9000,
+          isClosable: true,
+        });
+      });
+      return;
+    }
+    toast({
+      title: message,
+      duration: 9000,
+      isClosable: true,
+    });
+  };
 
   return (
     <Flex flexDir="column" h={'full'}>

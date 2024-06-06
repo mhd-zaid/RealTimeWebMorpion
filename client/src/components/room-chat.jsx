@@ -5,9 +5,10 @@ import {
   MessageList,
   Message,
   MessageInput,
+  MessageSeparator,
 } from '@chatscope/chat-ui-kit-react';
 import { useContext, useEffect, useState } from 'react';
-import { Box, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, useToast } from '@chakra-ui/react';
 import io from 'socket.io-client';
 import stringToColor from '../utils/stringToColor';
 import { AuthContext } from '@/context/AuthContext.jsx';
@@ -17,10 +18,14 @@ const RoomChat = ({ isGeneral, partyId }) => {
   const { token, user } = useContext(AuthContext);
   const [messageSocket, setMessageSocket] = useState();
   const [chatMessages, setChatMessages] = useState([]);
+
+  const fastMessages = ['Joli coup !', 'Bien joué !', 'Merci', 'Oops...', 'gg'];
+
   useEffect(() => {
     setMessageSocket(
       io(`${import.meta.env.VITE_SOCKET_URL}/messages`, {
         auth: { token },
+        query: { partyId: isGeneral ? 'general' : partyId },
       }),
     );
   }, [token]);
@@ -40,31 +45,12 @@ const RoomChat = ({ isGeneral, partyId }) => {
         setChatMessages(
           messages.data.map(message => ({
             message: message.content,
-            sender: message.user.userName,
+            sender: message.user && message.user.userName,
             senderId: message.userId,
             direction: 'incoming',
             sentTime: message.createdAt,
           })),
         );
-      });
-
-      messageSocket.on('user:join', message => {
-        console.log(message);
-        toast({
-          title: message,
-          status: 'info',
-          position: 'bottom-right',
-          duration: 3000,
-        });
-      });
-      messageSocket.on('user:quit', message => {
-        console.log(message);
-        toast({
-          title: message,
-          status: 'warning',
-          position: 'bottom-right',
-          duration: 3000,
-        });
       });
     });
 
@@ -81,7 +67,7 @@ const RoomChat = ({ isGeneral, partyId }) => {
   };
 
   return (
-    <Box w="full" h="full" position="relative">
+    <Flex flexDir="column" w="full" h="full" position="relative">
       {isGeneral && (
         <Text
           pos="absolute"
@@ -107,7 +93,9 @@ const RoomChat = ({ isGeneral, partyId }) => {
                   : msg,
               )
               .map((message, i) => {
-                return (
+                return message.sender === null ? (
+                  <MessageSeparator key={i}>{message.message}</MessageSeparator>
+                ) : (
                   <Message key={i} model={message}>
                     <Message.Header>{message.sender}</Message.Header>
                     <Box
@@ -138,7 +126,28 @@ const RoomChat = ({ isGeneral, partyId }) => {
           />
         </ChatContainer>
       </MainContainer>
-    </Box>
+
+      {!isGeneral && (
+        <Flex flexDir="column">
+          <Text as={'small'} mt={2} color={'gray'}>
+            Messages rapides
+          </Text>
+          <Flex mt={2} wrap={'wrap'}>
+            {fastMessages.map((msg, i) => (
+              <Button
+                key={i}
+                size={'sm'}
+                mr={2}
+                mb={2}
+                onClick={() => handleUserMessage(msg)}
+              >
+                {msg}
+              </Button>
+            ))}
+          </Flex>
+        </Flex>
+      )}
+    </Flex>
   );
 };
 

@@ -4,7 +4,6 @@ import lodash from 'lodash';
 import { faker } from '@faker-js/faker';
 import db from "../models/index.js";
 
-// Fixtures
 import usersFixture from './user.js';
 import {uuidv4} from "uuidv7";
 

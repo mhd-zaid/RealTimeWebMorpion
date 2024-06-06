@@ -11,22 +11,27 @@ export default (io, db) => {
       next();
     })
     .on('connection', async socket => {
-      socket.on('join', room => {
+      socket.on('join', async room => {
+        await db.Message.create({
+          content: `${socket.user.userName} vient de se connecter`,
+          userId: null,
+          partyId:
+            socket.handshake.query.partyId === 'general'
+              ? null
+              : socket.handshake.query.partyId,
+        });
         socket.join(room);
-        socket
-          .to(room)
-          .emit('user:join', `${socket.user.userName} vient de se connecter`);
         broadcastMessages(room);
       });
 
-      socket.on('disconnecting', () => {
-        socket.rooms.forEach(room => {
-          socket
-            .to(room)
-            .emit(
-              'user:quit',
-              `${socket.user.userName} vient de se déconnecter`,
-            );
+      socket.on('disconnecting', async () => {
+        await db.Message.create({
+          content: `${socket.user.userName} vient de se déconnecter`,
+          userId: null,
+          partyId:
+            socket.handshake.query.partyId === 'general'
+              ? null
+              : socket.handshake.query.partyId,
         });
       });
 

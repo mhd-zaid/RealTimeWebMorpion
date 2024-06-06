@@ -20,14 +20,14 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser({});
         document.cookie =
-          'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         navigate('/auth/login');
       }
     } catch (error) {
       setUser({});
       console.error(
-        'Erreur lors de la récupération des informations : ',
-        error,
+          'Erreur lors de la récupération des informations : ',
+          error,
       );
     }
 
@@ -58,14 +58,14 @@ export const AuthProvider = ({ children }) => {
   const login = async credentials => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/login`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+          `${import.meta.env.VITE_BACKEND_URL}/login`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
           },
-          body: JSON.stringify(credentials),
-        },
       );
 
       const result = await response.json();
@@ -73,28 +73,15 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         document.cookie = `auth_token=${result.data.token} ; path=/`;
         setUser(result.data.token);
-        navigate('/');
-        toast({
-          title: 'Connexion réussie',
-          description: 'Vous êtes maintenant connecté',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
+        navigate('/profile');
         localStorage.removeItem('currentParty');
       } else {
         console.error(
-          'Erreur lors de la tentative de connexion :',
-          result.message,
+            'Erreur lors de la tentative de connexion :',
+            result.message,
         );
-        toast({
-          title: 'Erreur lors de la connexion',
-          description: result.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
       }
+      return result;
     } catch (error) {
       console.error('Erreur lors de la tentative de connexion :', error);
     }
@@ -104,14 +91,14 @@ export const AuthProvider = ({ children }) => {
     setUser({});
     navigate('/auth/login');
     document.cookie =
-      'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     localStorage.removeItem('currentParty');
   };
 
   const getToken = () => {
     const tokenFromCookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('auth_token='));
+        .split('; ')
+        .find(row => row.startsWith('auth_token='));
     if (tokenFromCookie) {
       return tokenFromCookie.split('=')[1];
     }
@@ -130,6 +117,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+      <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };

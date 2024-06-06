@@ -17,7 +17,7 @@ const genericUserRouter = new GenericRouter(
   new GenericController(new GenericService(db.User)),
 );
 genericRoutes.forEach(route => {
-  genericUserRouter.addRoute(route, [...route.middlewares, checkAuth()]);
+  genericUserRouter.addRoute(route, [...route.middlewares]);
 });
 
 export default router => {

@@ -20,7 +20,8 @@ import {
   Center,
   useToast,
   position,
-  Container, Box,
+  Container,
+  Box,
 } from '@chakra-ui/react';
 import * as code from 'zod';
 import { useContext, useEffect, useState } from 'react';
@@ -87,22 +88,18 @@ const PartyOnline = () => {
 
   return (
     <Flex h={'full'} bg={'gray.900'} py={10}>
-      <Flex
-        direction={'column'}
-        alignItems={"center"}
-        w={"50%"}
-      >
+      <Flex direction={'column'} alignItems={'center'} w={'50%'}>
         <MorpionOnline party={party} />
         {party.code && (
-          <Text fontSize="xl" fontWeight="bold" m={4} color={"white"}>
+          <Text fontSize="xl" fontWeight="bold" m={4} color={'white'}>
             Code : {party.code}
           </Text>
         )}
       </Flex>
       {party.user1 && party.user2 && (
-        <Box w={"30%"} px={10}>
+        <Flex w={'50%'} px={10}>
           <RoomChat partyId={party.id} />
-        </Box>
+        </Flex>
       )}
     </Flex>
   );

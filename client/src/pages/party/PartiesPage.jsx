@@ -24,7 +24,6 @@ const PartiesPage = () => {
 
   moment.locale('fr');
 
-  // Connexion au namespace parties
   useEffect(() => {
     if (!user) return;
     setPartySocket(
@@ -36,9 +35,7 @@ const PartiesPage = () => {
 
   useEffect(() => {
     if (!partySocket) return;
-    //Récupération des parties en cours
     partySocket.emit("client:parties:list:inProgress");
-    //Récupération de nouvelles parties en cours
     partySocket.on('server:parties:list:inProgress', parties => {
       if (parties.status === 'success') {
         setGameInProgress(parties.data);
@@ -48,7 +45,6 @@ const PartiesPage = () => {
 
 
   const handleCreateParty = async () => {
-    //Création d'une partie publique
     partySocket.emit('client:parties:create', { is_private: false }, (party) => {
       if (party.status === 'success') {
         navigate(`/room/${party.data.id}`, { state: { party: party.data } });
@@ -58,7 +54,6 @@ const PartiesPage = () => {
 
   const joinGame = async (game) => {
     if(!partySocket) return;
-    //Rejoindre une partie publique en cours
     partySocket.emit("client:parties:join:party", game, (party) => {
       if (party.status === 'success') {
         navigate(`/room/${party.data.id}`, { state: { party: party.data } });
