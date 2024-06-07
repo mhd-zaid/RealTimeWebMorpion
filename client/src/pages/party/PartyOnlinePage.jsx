@@ -54,6 +54,7 @@ const PartyOnline = () => {
     setPartyOnlineSocket(
       io(`${import.meta.env.VITE_SOCKET_URL}/parties`, {
         auth: { token: token },
+        secure: true,
       }),
     );
   }, []);

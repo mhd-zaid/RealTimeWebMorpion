@@ -100,6 +100,7 @@ const GameBoardPage = () => {
     setPartySocket(
       io(`${import.meta.env.VITE_SOCKET_URL}/parties`, {
         auth: { token: token },
+        secure: true,
       }),
     );
   }, []);
@@ -122,60 +123,59 @@ const GameBoardPage = () => {
     <>
       <Center>
         <Flex
-        direction={"column"}
-        gap={8}
-        w={"50%"}
-        justifyContent={"center"}
-        padding={8}
-        boxShadow="xl"
-        rounded="lg"
-      >
-
-        <Button
-          w={'sm'}
-          leftIcon={<Icon icon="mdi:users" fontSize={30} />}
-          colorScheme="teal"
-          variant="solid"
-          size="lg"
-          onClick={() => navigate('room')}
+          direction={'column'}
+          gap={8}
+          w={'50%'}
+          justifyContent={'center'}
+          padding={8}
+          boxShadow="xl"
+          rounded="lg"
         >
-          2 joueurs
-        </Button>
+          <Button
+            w={'sm'}
+            leftIcon={<Icon icon="mdi:users" fontSize={30} />}
+            colorScheme="teal"
+            variant="solid"
+            size="lg"
+            onClick={() => navigate('room')}
+          >
+            2 joueurs
+          </Button>
 
-        <Button
-          w={'sm'}
-          leftIcon={
-            <Icon icon="fluent-mdl2:join-online-meeting" fontSize={30} />
-          }
-          colorScheme="blue"
-          variant="solid"
-          size="lg"
-          onClick={() => navigate('general')}
-        >
-          Jouer en ligne
-        </Button>
+          <Button
+            w={'sm'}
+            leftIcon={
+              <Icon icon="fluent-mdl2:join-online-meeting" fontSize={30} />
+            }
+            colorScheme="blue"
+            variant="solid"
+            size="lg"
+            onClick={() => navigate('general')}
+          >
+            Jouer en ligne
+          </Button>
 
-        <Button
-          w={'sm'}
-          leftIcon={<Icon icon="mdi:account-multiple-plus" fontSize={30} />}
-          colorScheme="orange"
-          variant="solid"
-          size="lg"
-          onClick={() => createPrivateGame()}
-        >
-          Créer une partie privée
-        </Button>
+          <Button
+            w={'sm'}
+            leftIcon={<Icon icon="mdi:account-multiple-plus" fontSize={30} />}
+            colorScheme="orange"
+            variant="solid"
+            size="lg"
+            onClick={() => createPrivateGame()}
+          >
+            Créer une partie privée
+          </Button>
 
-        <Button
-          w={'sm'}
-          leftIcon={<Icon icon="fa-solid:door-open" />}
-          colorScheme="green"
-          variant="solid"
-          size="lg"
-          onClick={() => requestCode()}
-        >
-          Rejoindre une partie privée
-        </Button>
+          <Button
+            w={'sm'}
+            leftIcon={<Icon icon="fa-solid:door-open" />}
+            colorScheme="green"
+            variant="solid"
+            size="lg"
+            onClick={() => requestCode()}
+          >
+            Rejoindre une partie privée
+          </Button>
         </Flex>
       </Center>
 
