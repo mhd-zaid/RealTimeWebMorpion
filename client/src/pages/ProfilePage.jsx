@@ -47,6 +47,7 @@ const ProfilePage = () => {
     setPartySocket(
       io(`${import.meta.env.VITE_SOCKET_URL}/parties`, {
         auth: { token: token },
+        secure: true,
       }),
     );
   }, [token]);
@@ -58,6 +59,7 @@ const ProfilePage = () => {
       setNotifSocket(
         io(`${import.meta.env.VITE_SOCKET_URL}/notifications`, {
           auth: { token: token },
+          secure: true,
         }),
       );
     }

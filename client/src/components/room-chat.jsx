@@ -26,6 +26,7 @@ const RoomChat = ({ isGeneral, partyId }) => {
       io(`${import.meta.env.VITE_SOCKET_URL}/messages`, {
         auth: { token },
         query: { partyId: isGeneral ? 'general' : partyId },
+        secure: true,
       }),
     );
   }, [token]);
